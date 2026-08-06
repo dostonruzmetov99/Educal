@@ -30,6 +30,7 @@ export default function App() {
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoginMode, setIsLoginMode] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [activeView, setActiveView] = useState('dashboard');
   const [users, setUsers] = useState<any[]>([]);
@@ -98,12 +99,15 @@ export default function App() {
       setEditName(currentUser.name || "Dostonbek Ruzmatov");
       setEditUsername(currentUser.username || "@d_ruzmatov");
       setEditAvatar(currentUser.avatar || "\https://ui-avatars.com/api/?name=&background=random&color=fff\");
-      setEditAchievements(currentUser.achievements || []);
+      setEditAchievements(currentUser.achievements?.filter((a:any) => a.title !== "Educal Yaratuvchisi") || []);
     }
   }, [currentUser?.id]);
 
+  const [isSaving, setIsSaving] = useState(false);
   const handleSaveProfile = async () => {
     try {
+      setIsSaving(true);
+      setIsSaving(true);
       const res = await fetch(API_URL + '/api/users/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
@@ -117,6 +121,8 @@ export default function App() {
       showToast("Profil muvaffaqiyatli saqlandi!", "success");
     } catch(e) {
       showToast("Xatolik", "error");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -152,7 +158,7 @@ export default function App() {
       }
     } catch(e) {
       showToast("Xatolik", "error");
-    }
+    } finally { setIsSaving(false); }
   };
 
   const handleCreatePost = async () => {
@@ -818,7 +824,7 @@ export default function App() {
                     ))}
                   </div>
 
-                  <button onClick={handleSaveProfile} style={{background: 'var(--primary-color)', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 600, width: '100%'}}>
+                  <button onClick={handleSaveProfile} disabled={isSaving} style={{background: isSaving ? 'var(--text-muted)' : 'var(--primary-color)', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', cursor: isSaving ? 'not-allowed' : 'pointer', fontWeight: 600, width: '100%'}}>
                     Saqlash
                   </button>
                 </div>

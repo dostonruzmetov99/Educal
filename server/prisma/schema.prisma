@@ -34,6 +34,8 @@ model User {
   reportsMade  Report[]      @relation("ReportingUser")
   followedBy   Follow[]      @relation("Following")
   followingRel Follow[]      @relation("Follower")
+  sentMessages Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 model Achievement {
@@ -97,4 +99,14 @@ model Follow {
   createdAt   DateTime @default(now())
 
   @@unique([followerId, followingId])
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  text       String
+  senderId   Int
+  receiverId Int
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  createdAt  DateTime @default(now())
 }
