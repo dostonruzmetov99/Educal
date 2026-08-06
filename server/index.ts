@@ -508,6 +508,17 @@ app.post('/api/posts/:id/comments', authMiddleware, async (req: any, res: any) =
   }
 });
 
+// API: Commentni o'chirish
+app.delete('/api/posts/:postId/comments/:commentId', authMiddleware, async (req: any, res: any) => {
+  try {
+    const commentId = parseInt(req.params.commentId);
+    await prisma.comment.delete({ where: { id: commentId } });
+    res.json({ success: true });
+  } catch(e) {
+    res.status(500).json({ error: "Commentni o'chirishda xatolik" });
+  }
+});
+
 
 app.post('/api/init', async (req, res) => {
   const existing = await prisma.user.findFirst({ where: { level: 'Asoschi' } });
