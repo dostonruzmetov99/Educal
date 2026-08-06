@@ -900,7 +900,7 @@ export default function App() {
 
             {activeView === 'messages' && (
               <div>
-                <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><MessageCircle size={28} /> Xabarlar va Shikoyatlar</h2>
+                <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><MessageCircle size={28} /> Xabarlar</h2>
                 <div className="card" style={{ padding: '24px', minHeight: '400px' }}>
                   {botMessages.length === 0 ? (
                     <div style={{ textAlign: 'center', color: 'var(--text-muted)', paddingTop: '100px' }}>
