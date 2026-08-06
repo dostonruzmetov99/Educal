@@ -28,15 +28,14 @@ export default function App() {
     return `Level ${Math.min(val, 999)}`;
   };
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  
   const [showPassword, setShowPassword] = useState(false);
   const [activeView, setActiveView] = useState('dashboard');
+  const [openCommentMenuId, setOpenCommentMenuId] = useState<number | null>(null);
   const [users, setUsers] = useState<any[]>([]);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isAppLoading, setIsAppLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(() => { try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch(e) { return null; } });
   const [posts, setPosts] = useState<any[]>([]);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [newPostText, setNewPostText] = useState("");
@@ -116,6 +115,7 @@ export default function App() {
       });
       const updatedUser = await res.json();
       setCurrentUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
       setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
       setActiveView('profile');
       setSelectedUser(updatedUser);
@@ -196,6 +196,7 @@ export default function App() {
       .then(data => {
         if (data.user) {
           setCurrentUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
           setEditBio(data.user.bio || "");
           if (data.user.followingRel) {
             setFollowingList(data.user.followingRel.map((f: any) => f.followingId));
@@ -203,10 +204,7 @@ export default function App() {
           setIsAuthenticated(true);
         }
       })
-      .catch(err => console.error(err))
-      .finally(() => setIsAppLoading(false));
-    } else {
-      setIsAppLoading(false);
+      .catch(err => console.error(err));
     }
 
     fetch(API_URL + '/api/init', { method: 'POST' })
@@ -230,8 +228,7 @@ export default function App() {
     setActiveView('profile');
   };
 
-  if (isAppLoading) return <div style={{display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', background: 'var(--bg-main)'}}><h3>Yuklanmoqda...</h3></div>;
-
+  // Removed isAppLoading to make UI instant
   if (!isAuthenticated) {
     return (
       <div style={{ display: 'flex', height: '100vh', width: '100vw', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-main)' }}>
@@ -298,6 +295,7 @@ export default function App() {
                    }
                    localStorage.setItem('token', data.token);
                    setCurrentUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
                    setActiveView('dashboard');
                    setSelectedUser(null);
                    setIsAuthenticated(true);
@@ -321,6 +319,7 @@ export default function App() {
                    }
                    localStorage.setItem('token', data.token);
                    setCurrentUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
                    setActiveView('dashboard');
                    setSelectedUser(null);
                    setIsAuthenticated(true);
@@ -677,7 +676,7 @@ export default function App() {
                   <div onClick={() => { setActiveView('security'); setOtpSent(false); setOldEmail(""); setOtpCode(""); setNewEmail(""); setOldPassword(""); setNewPassword(""); setConfirmPassword(""); }} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 0', borderBottom: '1px solid var(--border-light)', cursor: 'pointer' }}>
                     <Shield size={20} color="var(--primary-color)" /> <span style={{ fontWeight: 500 }}>Maxfiylik va Xavfsizlik</span>
                   </div>
-                  <div onClick={() => { localStorage.removeItem('token'); setIsAuthenticated(false); setCurrentUser(null); }} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 0', cursor: 'pointer', color: '#ef4444' }}>
+                  <div onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); setIsAuthenticated(false); setCurrentUser(null); }} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 0', cursor: 'pointer', color: '#ef4444' }}>
                     <LogOut size={20} /> <span style={{ fontWeight: 500 }}>Tizimdan Chiqish</span>
                   </div>
                 </div>
@@ -734,6 +733,7 @@ export default function App() {
                           const data = await res.json();
                           if (data.error) return showToast(data.error, "error");
                           setCurrentUser(data);
+                          localStorage.setItem('user', JSON.stringify(data));
                           showToast("Email muvaffaqiyatli o'zgartirildi!", "success");
                           setOtpSent(false); setOldEmail(""); setOtpCode(""); setNewEmail("");
                         } catch(e) { showToast("Xatolik", "error"); }
@@ -1098,24 +1098,62 @@ export default function App() {
                   <button onClick={() => setCommentsModalPostId(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>×</button>
                 </div>
                 <div style={{ padding: '16px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {(posts.find(p => p.id === commentsModalPostId)?.comments || []).map((c: any) => (
-                    <div key={c.id} style={{ display: 'flex', gap: '12px' }}>
+                  {(posts.find(p => p.id === commentsModalPostId)?.comments || []).map((c: any) => {
+                    const post = posts.find(p => p.id === commentsModalPostId);
+                    const isCommentOwner = c.userId === currentUser?.id;
+                    const isPostOwner = post?.userId === currentUser?.id;
+                    const isFounder = currentUser?.eduId === '1000001';
+                    const canDelete = isCommentOwner || isPostOwner || isFounder;
+                    return (
+                    <div key={c.id} style={{ display: 'flex', gap: '12px', position: 'relative' }}>
                       <img 
                         src={c.user?.avatar || `https://ui-avatars.com/api/?name=${c.user?.name}&background=random`} 
                         style={{ width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', objectFit: 'cover' }} 
                         onClick={() => { handleProfileView(c.user); setCommentsModalPostId(null); }}
                       />
-                      <div>
-                        <strong 
-                          style={{ cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '4px' }}
-                          onClick={() => { handleProfileView(c.user); setCommentsModalPostId(null); }}
-                        >
-                          {c.user?.name} {c.user?.isVerified && <VerifiedBadge size={14} />}
-                        </strong>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <strong 
+                            style={{ cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            onClick={() => { handleProfileView(c.user); setCommentsModalPostId(null); }}
+                          >
+                            {c.user?.name} {c.user?.isVerified && <VerifiedBadge size={14} />}
+                          </strong>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{c.createdAt ? new Date(c.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+                        </div>
                         <div style={{ fontSize: '13px', marginTop: '2px' }}>{c.text}</div>
                       </div>
+                      <div style={{ position: 'relative' }}>
+                        <MoreHorizontal size={16} color="var(--text-muted)" style={{ cursor: 'pointer' }} onClick={() => setOpenCommentMenuId(openCommentMenuId === c.id ? null : c.id)} />
+                        {openCommentMenuId === c.id && (
+                          <div style={{ position: 'absolute', right: 0, top: '20px', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '130px' }}>
+                            <div 
+                              onClick={() => { 
+                                navigator.clipboard.writeText(c.text); 
+                                showToast("Matn nusxalandi!", "success"); 
+                                setOpenCommentMenuId(null); 
+                              }}
+                              style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '12px', borderBottom: canDelete ? '1px solid var(--border-light)' : 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
+                            >
+                              <Copy size={14} /> Nusxalash
+                            </div>
+                            {canDelete && (
+                              <div 
+                                onClick={() => {
+                                  setPosts(posts.map(p => p.id === commentsModalPostId ? { ...p, comments: (p.comments||[]).filter((cm:any) => cm.id !== c.id) } : p));
+                                  setOpenCommentMenuId(null);
+                                  fetch(`${API_URL}/api/posts/${commentsModalPostId}/comments/${c.id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } }).catch(() => {});
+                                }}
+                                style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '12px', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}
+                              >
+                                <Trash2 size={14} /> O'chirish
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  ))}
+                  ) })}
                   {(posts.find(p => p.id === commentsModalPostId)?.comments || []).length === 0 && (
                     <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '14px' }}>Fikrlar yo'q</div>
                   )}
@@ -1129,18 +1167,18 @@ export default function App() {
                     style={{ flex: 1, padding: '10px 16px', borderRadius: '20px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '14px' }}
                   />
                   <button 
-                    onClick={async () => {
+                    onClick={() => {
                       if (!commentText[commentsModalPostId]) return;
-                      try {
-                        const res = await fetch(`${API_URL}/api/posts/${commentsModalPostId}/comments`, {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-                          body: JSON.stringify({ userId: currentUser?.id || 1, text: commentText[commentsModalPostId] })
-                        });
-                        const newC = await res.json();
-                        setPosts(posts.map(p => p.id === commentsModalPostId ? { ...p, comments: [...(p.comments||[]), newC] } : p));
-                        setCommentText({...commentText, [commentsModalPostId]: ""});
-                      } catch(e) {}
+                      const text = commentText[commentsModalPostId];
+                      const tempComment = { id: Date.now(), text, userId: currentUser?.id, user: currentUser, createdAt: new Date().toISOString() };
+                      setPosts(posts.map(p => p.id === commentsModalPostId ? { ...p, comments: [...(p.comments||[]), tempComment] } : p));
+                      setCommentText({...commentText, [commentsModalPostId]: ""});
+                      
+                      fetch(`${API_URL}/api/posts/${commentsModalPostId}/comments`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                        body: JSON.stringify({ userId: currentUser?.id || 1, text })
+                      }).catch(() => {});
                     }}
                     style={{ background: 'none', border: 'none', color: 'var(--primary-color)', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}
                   >
