@@ -32,12 +32,12 @@ export default function App() {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [activeView, setActiveView] = useState('dashboard');
+  const [activeView, setActiveView] = useState(() => localStorage.getItem('activeView') || 'dashboard');
   const [openCommentMenuId, setOpenCommentMenuId] = useState<number | null>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(() => { try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch(e) { return null; } });
   const [posts, setPosts] = useState<any[]>([]);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<any>(() => { try { return JSON.parse(localStorage.getItem('selectedUser') || 'null'); } catch(e) { return null; } });
   const [newPostText, setNewPostText] = useState("");
   const [newPostImage, setNewPostImage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -91,7 +91,16 @@ export default function App() {
     setTimeout(() => setToast(null), 3000);
   };
   const [confirmDialog, setConfirmDialog] = useState<{msg: string, onConfirm: () => void} | null>(null);
-  const [promptDialog, setPromptDialog] = useState<{msg: string, val: string, onConfirm: (val: string) => void} | null>(null);
+  const [promptDialog, setPromptDialog] = useState<{msg: string, val?: string, onConfirm: (val: string) => void} | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem('activeView', activeView);
+  }, [activeView]);
+
+  useEffect(() => {
+    if (selectedUser) localStorage.setItem('selectedUser', JSON.stringify(selectedUser));
+    else localStorage.removeItem('selectedUser');
+  }, [selectedUser]);
   const [botMessages, setBotMessages] = useState<any[]>([]);
 
 
