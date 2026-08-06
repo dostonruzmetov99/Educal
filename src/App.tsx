@@ -1070,8 +1070,8 @@ export default function App() {
                       {selectedUser.bio && <p style={{ color: 'var(--text-main)', fontSize: '15px', marginTop: '8px', marginBottom: '12px', whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>{selectedUser.bio}</p>}
                       <span className="badge">{getLevelDisplay(selectedUser)}</span>
                       <div style={{ display: 'flex', gap: '24px', fontSize: '14px', marginTop: '16px' }}>
-                        <span onClick={() => setFollowersModal({type: 'followers', userId: selectedUser.id})} style={{ cursor: 'pointer' }}><strong>{selectedUser.followedBy?.length || followingList.includes(selectedUser.id) ? (selectedUser.followers || 0) + 1 : (selectedUser.followers || 0)}</strong> Obunachilar</span>
-                        <span onClick={() => setFollowersModal({type: 'following', userId: selectedUser.id})} style={{ cursor: 'pointer' }}><strong>{selectedUser.followingRel?.length || selectedUser.following || 0}</strong> Obunalar</span>
+                        <span onClick={() => setFollowersModal({type: 'followers', userId: selectedUser.id})} style={{ cursor: 'pointer' }}><strong>{selectedUser.followedBy ? selectedUser.followedBy.length : 0}</strong> Obunachilar</span>
+                        <span onClick={() => setFollowersModal({type: 'following', userId: selectedUser.id})} style={{ cursor: 'pointer' }}><strong>{selectedUser.id === currentUser?.id ? followingList.length : (selectedUser.followingRel ? selectedUser.followingRel.length : 0)}</strong> Obunalar</span>
                       </div>
                     </div>
 
