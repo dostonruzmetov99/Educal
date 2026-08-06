@@ -114,11 +114,12 @@ export default function App() {
         body: JSON.stringify({ name: editName, username: editUsername, avatar: editAvatar, achievements: editAchievements, bio: editBio })
       });
       const updatedUser = await res.json();
-      setCurrentUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
+      const mergedUser = { ...(users.find(u => u.id === updatedUser.id) || {}), ...updatedUser };
+      setCurrentUser(mergedUser);
+      localStorage.setItem('user', JSON.stringify(mergedUser));
+      setUsers(users.map(u => u.id === updatedUser.id ? mergedUser : u));
       setActiveView('profile');
-      setSelectedUser(updatedUser);
+      setSelectedUser(mergedUser);
       showToast("Profil muvaffaqiyatli saqlandi!", "success");
     } catch(e) {
       showToast("Xatolik", "error");
