@@ -974,10 +974,12 @@ export default function App() {
                         <>
                           <div style={{ padding: '16px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '12px' }}>
                             {window.innerWidth < 768 && (
-                              <button onClick={() => setActiveChatUserId(null)} style={{ background: 'none', border: 'none' }}><ArrowLeft size={20} /></button>
+                              <button onClick={() => setActiveChatUserId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><ArrowLeft size={20} /></button>
                             )}
-                            <img src={chatUser.avatar || `https://ui-avatars.com/api/?name=${chatUser.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
-                            <div style={{ fontWeight: 600 }}>{chatUser.name}</div>
+                            <div onClick={() => { setSelectedUser(chatUser); setActiveView('profile'); }} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                              <img src={chatUser.avatar || `https://ui-avatars.com/api/?name=${chatUser.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
+                              <div style={{ fontWeight: 600 }}>{chatUser.name}</div>
+                            </div>
                           </div>
                           
                           <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
