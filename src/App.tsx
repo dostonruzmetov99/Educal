@@ -215,7 +215,7 @@ export default function App() {
         if (Array.isArray(data)) setUsers([...data, {id:999999, name:'Educal Bot', username:'@educal_bot', eduId:'1000000', level:'Bot', isVerified:true, avatar:'https://ui-avatars.com/api/?name=EB&background=4f46e5&color=fff', achievements:[]}]);
       });
 
-    fetch(API_URL + '/api/posts')
+    fetch(API_URL + '/api/posts', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } })
       .then(res => res.json())
       .then(data => { if (Array.isArray(data)) setPosts(data); });
       
