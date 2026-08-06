@@ -517,7 +517,7 @@ export default function App() {
                 {posts.length === 0 ? (
                   <div style={{ color: 'var(--text-muted)' }}>Hech qanday ma'lumot yo'q.</div>
                 ) : (
-                  <div className="grid-layout">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '650px' }}>
                     {posts.map((post: any) => (
                       <div className="card" key={post.id}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', marginBottom: '16px' }}>
@@ -758,7 +758,7 @@ export default function App() {
                 </div>
                 <h2 style={{marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px'}}><Shield size={28} color="var(--primary-color)"/> Maxfiylik va Xavfsizlik</h2>
                 
-                <div className="card" style={{ marginBottom: '24px' }}>
+                <div className="card" style={{ marginBottom: '24px', maxWidth: '650px' }}>
                   <h3 style={{ marginBottom: '16px', fontSize: '18px' }}>Emailni o'zgartirish</h3>
                   
                   {!otpSent ? (
@@ -1135,9 +1135,9 @@ export default function App() {
                     </div>
                   </div>
 
-                  </div><div style={{ marginTop: '24px', maxWidth: '500px' }}>
+                  </div><div style={{ marginTop: '24px', maxWidth: '650px' }}>
                     <h3 style={{ fontSize: '20px', marginBottom: '16px', fontWeight: 700 }}>{selectedUser.name} Postlari</h3>
-                    <div className="grid-layout">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                       {posts.filter(p => p.userId === selectedUser.id).map(post => (
                         <div className="card" key={post.id}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', marginBottom: '16px' }}>
