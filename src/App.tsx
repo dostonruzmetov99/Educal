@@ -97,7 +97,7 @@ export default function App() {
     if (currentUser) {
       setEditName(currentUser.name || "Dostonbek Ruzmatov");
       setEditUsername(currentUser.username || "@d_ruzmatov");
-      setEditAvatar(currentUser.avatar || "https://i.pravatar.cc/150?img=11");
+      setEditAvatar(currentUser.avatar || "\https://ui-avatars.com/api/?name=&background=random&color=fff\");
       setEditAchievements(currentUser.achievements || []);
     }
   }, [currentUser?.id]);
