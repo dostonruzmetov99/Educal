@@ -521,7 +521,14 @@ export default function App() {
                     {posts.map((post: any) => (
                       <div className="card" key={post.id}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', marginBottom: '16px' }}>
-                          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                          <div 
+                            style={{ display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}
+                            onClick={() => {
+                              if (post.user) {
+                                handleProfileView(post.user);
+                              }
+                            }}
+                          >
                             <img src={post.user?.avatar || `https://ui-avatars.com/api/?name=${post.user?.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                               <h4 style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', margin: 0, whiteSpace: 'nowrap' }}>
