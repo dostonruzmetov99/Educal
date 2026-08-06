@@ -510,6 +510,8 @@ export default function App() {
                               </h4>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
                                 <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{post.user?.username}</span>
+                                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>•</span>
+                                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{new Date(post.createdAt).toLocaleDateString()} {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                                 <span className="badge" style={{ fontSize: '10px', padding: '2px 8px' }}>{getLevelDisplay(post.user)}</span>
                               </div>
                             </div>
