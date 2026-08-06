@@ -1029,10 +1029,7 @@ export default function App() {
                       <div className="rank-label"><span style={{ marginRight: '6px' }}>{selectedUser.countryFlag || '🇺🇿'}</span>O'quvchilari</div>
                       <div className="rank-value">{selectedUser.followedBy?.length || 0}</div>
                     </div>
-                    <div className="rank-box">
-                      <div className="rank-label"><MapPin size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />Yutuqlari</div>
-                      <div className="rank-value">{selectedUser.achievements?.filter((a:any)=>a.title!=='Educal Yaratuvchisi').length || 0}</div>
-                    </div>
+                    
                   </div>
 
                   <div style={{ marginTop: '40px' }}>
