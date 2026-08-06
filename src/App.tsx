@@ -102,6 +102,32 @@ export default function App() {
     else localStorage.removeItem('selectedUser');
   }, [selectedUser]);
   const [botMessages, setBotMessages] = useState<any[]>([]);
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [activeChatUserId, setActiveChatUserId] = useState<number | null>(null);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [newChatMessage, setNewChatMessage] = useState("");
+
+  useEffect(() => {
+    if (activeView === 'messages' && isAuthenticated) {
+      fetch(`${API_URL}/api/messages/conversations`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } })
+        .then(res => res.json())
+        .then(data => { if (Array.isArray(data)) setConversations(data); });
+    }
+  }, [activeView, isAuthenticated]);
+
+  useEffect(() => {
+    let interval: any;
+    if (activeChatUserId) {
+      const fetchMsgs = () => {
+        fetch(`${API_URL}/api/messages/${activeChatUserId}`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } })
+          .then(res => res.json())
+          .then(data => { if (Array.isArray(data)) setChatMessages(data); });
+      };
+      fetchMsgs();
+      interval = setInterval(fetchMsgs, 3000);
+    }
+    return () => clearInterval(interval);
+  }, [activeChatUserId]);
 
 
 
@@ -908,28 +934,107 @@ export default function App() {
             )}
 
             {activeView === 'messages' && (
-              <div>
-                <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><MessageCircle size={28} /> Xabarlar</h2>
-                <div className="card" style={{ padding: '24px', minHeight: '400px' }}>
-                  {botMessages.length === 0 ? (
-                    <div style={{ textAlign: 'center', color: 'var(--text-muted)', paddingTop: '100px' }}>
-                      <MessageCircle size={48} style={{ opacity: 0.2, marginBottom: '16px' }} />
-                      <p>Hozircha xabarlar yo'q</p>
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      {botMessages.map((msg: any) => (
-                        <div key={msg.id} style={{ padding: '16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                            <strong style={{ color: '#b91c1c' }}>Educal Bot</strong>
-                            <span style={{ fontSize: '12px', color: '#991b1b' }}>{new Date(msg.createdAt).toLocaleString()}</span>
+              <div style={{ height: 'calc(100vh - 120px)', display: 'flex', gap: '20px', flexDirection: window.innerWidth < 768 && activeChatUserId ? 'column' : 'row' }}>
+                {(!activeChatUserId || window.innerWidth >= 768) && (
+                  <div className="card" style={{ flex: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+                    <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><MessageCircle size={28} /> Suhbatlar</h2>
+                    {botMessages.length > 0 && currentUser?.eduId === '1000001' && (
+                      <div style={{ marginBottom: '20px', padding: '12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px' }}>
+                        <h4 style={{ color: '#b91c1c', marginBottom: '8px' }}>Shikoyatlar ({botMessages.length})</h4>
+                        {botMessages.map((msg: any) => (
+                          <p key={msg.id} style={{ margin: 0, fontSize: '12px', color: '#7f1d1d' }}>{msg.reporter?.name} -> {msg.reportedUser?.name}</p>
+                        ))}
+                      </div>
+                    )}
+                    {conversations.length === 0 ? (
+                      <div style={{ textAlign: 'center', color: 'var(--text-muted)', paddingTop: '40px' }}>
+                        <p>Hozircha suhbatlar yo'q</p>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {conversations.map((conv: any) => (
+                          <div key={conv.user.id} onClick={() => setActiveChatUserId(conv.user.id)} style={{ padding: '12px', borderRadius: '12px', background: activeChatUserId === conv.user.id ? '#eef2ff' : 'var(--bg-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <img src={conv.user.avatar || `https://ui-avatars.com/api/?name=${conv.user.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
+                            <div>
+                              <div style={{ fontWeight: 600, fontSize: '15px' }}>{conv.user.name}</div>
+                              <div style={{ fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '180px' }}>{conv.lastMessage?.text}</div>
+                            </div>
                           </div>
-                          <p style={{ margin: 0, fontSize: '14px', whiteSpace: 'pre-line', color: '#7f1d1d', lineHeight: '1.5' }}>DIQQAT! Shikoyat:\nKIMDAN: {msg.reporter?.name}\nKIMGA NISBATAN: {msg.reportedUser?.name}\nSABAB: {msg.reason}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {activeChatUserId && (
+                  <div className="card" style={{ flex: 2, padding: 0, display: 'flex', flexDirection: 'column', height: '100%' }}>
+                    {(() => {
+                      const chatUser = users.find(u => u.id === activeChatUserId) || conversations.find(c => c.user.id === activeChatUserId)?.user;
+                      return chatUser && (
+                        <>
+                          <div style={{ padding: '16px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            {window.innerWidth < 768 && (
+                              <button onClick={() => setActiveChatUserId(null)} style={{ background: 'none', border: 'none' }}><ArrowLeft size={20} /></button>
+                            )}
+                            <img src={chatUser.avatar || `https://ui-avatars.com/api/?name=${chatUser.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
+                            <div style={{ fontWeight: 600 }}>{chatUser.name}</div>
+                          </div>
+                          
+                          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {chatMessages.map((msg: any) => {
+                              const isMe = msg.senderId === currentUser?.id;
+                              return (
+                                <div key={msg.id} style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '70%', padding: '10px 16px', borderRadius: '16px', background: isMe ? 'var(--primary-color)' : '#f3f4f6', color: isMe ? 'white' : 'var(--text-main)', fontSize: '15px' }}>
+                                  {msg.text}
+                                </div>
+                              );
+                            })}
+                          </div>
+                          
+                          <div style={{ padding: '16px', borderTop: '1px solid var(--border-light)', display: 'flex', gap: '12px' }}>
+                            <input 
+                              type="text" 
+                              value={newChatMessage}
+                              onChange={e => setNewChatMessage(e.target.value)}
+                              placeholder="Xabar yozing..." 
+                              onKeyDown={async e => {
+                                if (e.key === 'Enter' && newChatMessage.trim()) {
+                                  try {
+                                    const res = await fetch(`${API_URL}/api/messages/${activeChatUserId}`, {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                                      body: JSON.stringify({ text: newChatMessage })
+                                    });
+                                    const newMsg = await res.json();
+                                    setChatMessages([...chatMessages, newMsg]);
+                                    setNewChatMessage("");
+                                  } catch (e) {}
+                                }
+                              }}
+                              style={{ flex: 1, padding: '12px', borderRadius: '24px', border: '1px solid var(--border-light)', outline: 'none' }} 
+                            />
+                            <button onClick={async () => {
+                                if (newChatMessage.trim()) {
+                                  try {
+                                    const res = await fetch(`${API_URL}/api/messages/${activeChatUserId}`, {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                                      body: JSON.stringify({ text: newChatMessage })
+                                    });
+                                    const newMsg = await res.json();
+                                    setChatMessages([...chatMessages, newMsg]);
+                                    setNewChatMessage("");
+                                  } catch (e) {}
+                                }
+                            }} style={{ background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                              <MessageCircle size={20} />
+                            </button>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1108,7 +1213,7 @@ export default function App() {
                         >
                           {followingList.includes(selectedUser.id) ? 'Kuzatilmoqda' : 'Kuzatish'}
                         </button>
-                        <button onClick={() => showToast("Chat tizimi tez orada ishga tushadi!", "info")} style={{ padding: '10px 24px', background: 'var(--bg-main)', color: 'var(--text-main)', borderRadius: '8px', border: '1px solid var(--border-light)', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                        <button onClick={() => { setActiveView('messages'); setActiveChatUserId(selectedUser.id); }} style={{ padding: '10px 24px', background: 'var(--bg-main)', color: 'var(--text-main)', borderRadius: '8px', border: '1px solid var(--border-light)', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
                           Xabar yuborish
                         </button>
                       </div>

@@ -578,6 +578,84 @@ app.post('/api/init', async (req, res) => {
   res.json({ message: "Asoschi profili tayyor!" });
 });
 
+// --- CHAT (MESSAGES) API ---
+
+// 1. Get all conversations (users the current user has chatted with)
+app.get('/api/messages/conversations', authMiddleware, async (req: any, res: any) => {
+  try {
+    const userId = req.userId;
+    // Find all users where there is a message between currentUser and them
+    const messages = await prisma.message.findMany({
+      where: { OR: [{ senderId: userId }, { receiverId: userId }] },
+      orderBy: { createdAt: 'desc' },
+      include: { sender: true, receiver: true }
+    });
+    
+    // Group by conversation partner
+    const convos = new Map();
+    messages.forEach(msg => {
+      const partnerId = msg.senderId === userId ? msg.receiverId : msg.senderId;
+      const partner = msg.senderId === userId ? msg.receiver : msg.sender;
+      if (!convos.has(partnerId)) {
+        convos.set(partnerId, {
+          user: partner,
+          lastMessage: msg
+        });
+      }
+    });
+    
+    res.json(Array.from(convos.values()));
+  } catch(e) {
+    res.status(500).json({ error: "Suhbatlarni yuklashda xatolik" });
+  }
+});
+
+// 2. Get chat history with a specific user
+app.get('/api/messages/:userId', authMiddleware, async (req: any, res: any) => {
+  try {
+    const userId = req.userId;
+    const partnerId = parseInt(req.params.userId);
+    
+    const messages = await prisma.message.findMany({
+      where: {
+        OR: [
+          { senderId: userId, receiverId: partnerId },
+          { senderId: partnerId, receiverId: userId }
+        ]
+      },
+      orderBy: { createdAt: 'asc' }
+    });
+    
+    res.json(messages);
+  } catch(e) {
+    res.status(500).json({ error: "Xabarlarni yuklashda xatolik" });
+  }
+});
+
+// 3. Send a message to a specific user
+app.post('/api/messages/:userId', authMiddleware, async (req: any, res: any) => {
+  try {
+    const senderId = req.userId;
+    const receiverId = parseInt(req.params.userId);
+    const { text } = req.body;
+    
+    if (!text || text.trim() === '') return res.status(400).json({ error: "Xabar bo'sh bo'lishi mumkin emas" });
+    
+    const newMsg = await prisma.message.create({
+      data: {
+        text,
+        senderId,
+        receiverId
+      }
+    });
+    
+    res.json(newMsg);
+  } catch(e) {
+    res.status(500).json({ error: "Xabar yuborishda xatolik" });
+  }
+});
+
+
 app.listen(PORT, () => {
   console.log(`Backend is running on http://localhost:${PORT}`);
 });
