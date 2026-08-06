@@ -21,7 +21,8 @@ body {
   font-family: 'Outfit', sans-serif;
   background: var(--bg-main);
   color: var(--text-main);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .dashboard-container {
@@ -149,4 +150,40 @@ body {
   .profile-large-avatar { width: 90px; height: 90px; margin-top: -45px; }
   
   .rank-boxes { flex-direction: column; }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    height: auto;
+    min-height: 100vh;
+  }
+  .main-area {
+    padding-bottom: 80px;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .content-scroll {
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .top-header {
+    padding: 0 16px;
+  }
+  input[type="text"], input[type="password"], textarea, input[type="file"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+  .card {
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .profile-stats {
+    flex-wrap: wrap;
+  }
+  .profile-stats-card {
+    flex: 1 1 100%;
+    margin-bottom: 10px;
+  }
 }

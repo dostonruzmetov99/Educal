@@ -63,17 +63,20 @@ export default function App() {
 
   const handleFileUpload = async (file: any) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('image', file);
     try {
-      const res = await fetch(API_URL + '/api/upload', {
+      showToast("Rasm ImgBB ga yuklanmoqda...", "info");
+      const res = await fetch('https://api.imgbb.com/1/upload?key=962cc8f3a7ba9c7da61a45c33fd98efa', {
         method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
         body: formData
       });
       const data = await res.json();
-      return data.url;
+      if(data.success) {
+         return data.data.url;
+      }
+      return null;
     } catch(e) {
-      showToast("Fayl yuklashda xatolik", "error");
+      showToast("Yuklashda xatolik", "error");
       return null;
     }
   };
@@ -200,10 +203,10 @@ export default function App() {
     }
 
     fetch(API_URL + '/api/init', { method: 'POST' })
-      .then(() => fetch(API_URL + '/api/users'))
+      .then(() => fetch(API_URL + '/api/users', {headers:{'Authorization':'Bearer '+localStorage.getItem('token')}}))
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) setUsers(data);
+        if (Array.isArray(data)) setUsers([...data, {id:999999, name:'Educal Bot', username:'@educal_bot', eduId:'1000000', level:'Bot', isVerified:true, avatar:'https://ui-avatars.com/api/?name=EB&background=4f46e5&color=fff', achievements:[]}]);
       });
 
     fetch(API_URL + '/api/posts')
@@ -292,7 +295,7 @@ export default function App() {
                    setSelectedUser(null);
                    setIsAuthenticated(true);
                    // Refresh users to include new user
-                   fetch(API_URL + '/api/users').then(r => r.json()).then(d => setUsers(d));
+                   fetch(API_URL + '/api/users', {headers:{'Authorization':'Bearer '+localStorage.getItem('token')}}).then(r => r.json()).then(d => { if(Array.isArray(d)) setUsers([...d, {id:999999, name:'Educal Bot', username:'@educal_bot', eduId:'1000000', level:'Bot', isVerified:true, avatar:'https://ui-avatars.com/api/?name=EB&background=4f46e5&color=fff', achievements:[]}]); });
                  } catch (err) {
                    console.error(err);
                    showToast("Serverga ulanishda xatolik yuz berdi.", "error");
@@ -597,7 +600,7 @@ export default function App() {
                 <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><Trophy size={28} color="#f59e0b" /> Dunyoviy Top Reyting</h2>
                 <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
                   {[...users].sort((a, b) => {
-                    const levelA = a.level === 'Asoschi' ? 1000 : parseInt(a.level || '1');
+                    if(a.level==='Bot') return 1; if(b.level==='Bot') return -1; const levelA = a.level === 'Asoschi' ? 1000 : parseInt(a.level || '1');
                     const levelB = b.level === 'Asoschi' ? 1000 : parseInt(b.level || '1');
                     return levelB - levelA;
                   }).map((user: any, index: number) => (
@@ -1015,12 +1018,12 @@ export default function App() {
                       <div className="rank-value">{selectedUser.level === 'Asoschi' ? 1 : Math.max(1, 1000 - parseInt(selectedUser.level||'1') * 5)}</div>
                     </div>
                     <div className="rank-box">
-                      <div className="rank-label"><span style={{ marginRight: '6px' }}>{selectedUser.countryFlag || '🇺🇿'}</span> Davlat</div>
-                      <div className="rank-value">{selectedUser.level === 'Asoschi' ? 1 : Math.max(1, 500 - parseInt(selectedUser.level||'1') * 2)}</div>
+                      <div className="rank-label"><span style={{ marginRight: '6px' }}>{selectedUser.countryFlag || '🇺🇿'}</span>O'quvchilari</div>
+                      <div className="rank-value">{selectedUser.followedBy?.length || 0}</div>
                     </div>
                     <div className="rank-box">
-                      <div className="rank-label"><MapPin size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Viloyat</div>
-                      <div className="rank-value">{selectedUser.level === 'Asoschi' ? 1 : Math.max(1, 100 - parseInt(selectedUser.level||'1'))}</div>
+                      <div className="rank-label"><MapPin size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />Yutuqlari</div>
+                      <div className="rank-value">{selectedUser.achievements?.filter((a:any)=>a.title!=='Educal Yaratuvchisi').length || 0}</div>
                     </div>
                   </div>
 
