@@ -945,17 +945,23 @@ export default function App() {
                                   try {
                                     const action = selectedUser.isVerified ? 'olib tashlandi' : 'berildi';
                                     const newStatus = !selectedUser.isVerified;
-                                    await fetch(`${API_URL}/api/users/${selectedUser.id}/verify`, {
+                                    const res = await fetch(`${API_URL}/api/users/${selectedUser.id}/verify`, {
                                       method: 'PUT',
                                       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
                                       body: JSON.stringify({ isVerified: newStatus })
                                     });
+                                    if (!res.ok) {
+                                      const errData = await res.json();
+                                      return showToast(errData.error || "Xatolik yuz berdi", "error");
+                                    }
                                     const newSelected = {...selectedUser, isVerified: newStatus};
                                     setSelectedUser(newSelected);
                                     setUsers(users.map((u: any) => u.id === newSelected.id ? newSelected : u));
                                     showToast(`Foydalanuvchiga galichka ${action}!`, "success");
                                     setShowMenu(false);
-                                  } catch (e) {}
+                                  } catch (e) {
+                                    showToast("Tarmoq xatosi", "error");
+                                  }
                                 }}
                                 style={{ textAlign: 'left', padding: '10px 12px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: '6px', fontSize: '13px', fontWeight: 600, color: '#0095F6', display: 'flex', alignItems: 'center', gap: '8px' }} className="nav-item"
                               >

@@ -361,7 +361,10 @@ app.put('/api/users/:id/level', authMiddleware, async (req: any, res: any) => {
 // API: Galichka (isVerified) yangilash
 app.put('/api/users/:id/verify', authMiddleware, async (req: any, res: any) => {
   try {
-    if (req.level !== 'Asoschi') return res.status(403).json({ error: "Ruxsat yo'q" });
+    const admin = await prisma.user.findUnique({ where: { id: req.userId } });
+    if (admin?.eduId !== '1000001' && admin?.level !== 'Asoschi') {
+      return res.status(403).json({ error: "Ruxsat yo'q. Faqat asoschi buni qila oladi." });
+    }
     const id = parseInt(req.params.id);
     const { isVerified } = req.body;
     const user = await prisma.user.update({
