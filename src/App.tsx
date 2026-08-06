@@ -1053,18 +1053,10 @@ export default function App() {
                   </div>
 
                   <div className="rank-boxes" style={{ marginTop: '32px', maxWidth: '500px' }}>
-                    {selectedUser.id === currentUser.id && (
-                      <>
-                        <div className="rank-box">
-                          <div className="rank-label"><Globe size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Global</div>
-                          <div className="rank-value">{selectedUser.level === 'Asoschi' ? 1 : Math.max(1, 1000 - parseInt(selectedUser.level||'1') * 5)}</div>
-                        </div>
-                        <div className="rank-box">
-                          <div className="rank-label"><span style={{ marginRight: '6px' }}>{selectedUser.countryFlag || '🇺🇿'}</span>O'quvchilari</div>
-                          <div className="rank-value">{selectedUser.followedBy?.length || 0}</div>
-                        </div>
-                      </>
-                    )}
+                    <div className="rank-box">
+                      <div className="rank-label"><Globe size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Global</div>
+                      <div className="rank-value">{users.length}</div>
+                    </div>
                   </div>
 
                   <div style={{ marginTop: '40px' }}>
