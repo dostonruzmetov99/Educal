@@ -57,6 +57,8 @@ export default function App() {
   const [showMenu, setShowMenu] = useState(false);
   const [openPostMenuId, setOpenPostMenuId] = useState<number | null>(null);
   const [commentsModalPostId, setCommentsModalPostId] = useState<number | null>(null);
+  const [followersModal, setFollowersModal] = useState<{type: "followers" | "following", userId: number} | null>(null);
+  const [postMenuId, setPostMenuId] = useState<number | null>(null);
   const [editAchievements, setEditAchievements] = useState<any[]>([]);
   const [newAchievement, setNewAchievement] = useState("");
   const [newAchievementImage, setNewAchievementImage] = useState("");
@@ -1066,7 +1068,33 @@ export default function App() {
             )}
           </>
           
-          {commentsModalPostId && (
+          
+{followersModal && (
+  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setFollowersModal(null)}>
+    <div style={{ background: 'var(--bg-card)', width: '350px', maxHeight: '70vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+      <div style={{ padding: '16px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 style={{ fontWeight: 600 }}>{followersModal.type === 'followers' ? 'Obunachilar' : 'Obunalar'}</h3>
+        <button onClick={() => setFollowersModal(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+      </div>
+      <div style={{ padding: '16px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {users.filter(u => followersModal.type === 'followers' ? u.followingRel?.some((f:any)=>f.followingId === followersModal.userId) : u.followedBy?.some((f:any)=>f.followerId === followersModal.userId)).map(u => (
+          <div key={u.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => { handleProfileView(u); setFollowersModal(null); }}>
+            <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+            <div>
+              <div style={{ fontWeight: 600 }}>{u.name}</div>
+              <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{u.username}</div>
+            </div>
+          </div>
+        ))}
+        {users.filter(u => followersModal.type === 'followers' ? u.followingRel?.some((f:any)=>f.followingId === followersModal.userId) : u.followedBy?.some((f:any)=>f.followerId === followersModal.userId)).length === 0 && (
+          <p style={{ color: 'var(--text-muted)', textAlign: 'center' }}>Hech kim yo'q</p>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
+{commentsModalPostId && (
             <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setCommentsModalPostId(null)}>
               <div style={{ background: 'var(--bg-card)', width: '400px', maxHeight: '80vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
                 <div style={{ padding: '16px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
