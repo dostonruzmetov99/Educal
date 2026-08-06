@@ -353,7 +353,7 @@ export default function App() {
     </div>
   );
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container" onClick={() => { setOpenPostMenuId(null); setOpenCommentMenuId(null); }}>
 
       {/* Sidebar Nav */}
       <div className="sidebar">
@@ -523,7 +523,7 @@ export default function App() {
                           </div>
                           
                           <div style={{ position: 'relative' }}>
-                            <MoreHorizontal size={20} color="var(--text-muted)" style={{ cursor: 'pointer' }} onClick={() => setOpenPostMenuId(openPostMenuId === post.id ? null : post.id)} />
+                            <MoreHorizontal size={20} color="var(--text-muted)" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setOpenPostMenuId(openPostMenuId === post.id ? null : post.id); }} />
                             {openPostMenuId === post.id && (
                               <div style={{ position: 'absolute', right: 0, top: '24px', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
                                 <div 
@@ -1003,7 +1003,7 @@ export default function App() {
                         >
                           {followingList.includes(selectedUser.id) ? 'Kuzatilmoqda' : 'Kuzatish'}
                         </button>
-                        <button onClick={() => alert("Chat tizimi tez orada ishga tushadi!")} style={{ padding: '10px 24px', background: 'var(--bg-main)', color: 'var(--text-main)', borderRadius: '8px', border: '1px solid var(--border-light)', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                        <button onClick={() => showToast("Chat tizimi tez orada ishga tushadi!", "info")} style={{ padding: '10px 24px', background: 'var(--bg-main)', color: 'var(--text-main)', borderRadius: '8px', border: '1px solid var(--border-light)', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
                           Xabar yuborish
                         </button>
                       </div>
@@ -1178,7 +1178,7 @@ export default function App() {
                         <div style={{ fontSize: '13px', marginTop: '2px' }}>{c.text}</div>
                       </div>
                       <div style={{ position: 'relative' }}>
-                        <MoreHorizontal size={16} color="var(--text-muted)" style={{ cursor: 'pointer' }} onClick={() => setOpenCommentMenuId(openCommentMenuId === c.id ? null : c.id)} />
+                        <MoreHorizontal size={16} color="var(--text-muted)" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setOpenCommentMenuId(openCommentMenuId === c.id ? null : c.id); }} />
                         {openCommentMenuId === c.id && (
                           <div style={{ position: 'absolute', right: 0, top: '20px', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '130px' }}>
                             <div 
