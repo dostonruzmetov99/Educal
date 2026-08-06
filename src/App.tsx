@@ -1101,7 +1101,7 @@ export default function App() {
                     {selectedUser.id === currentUser.id && currentUser.eduId === '1000001' && (
                       <div className="rank-box" style={{ cursor: 'pointer' }} onClick={() => setActiveView('all-users')}>
                         <div className="rank-label"><Globe size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Global</div>
-                        <div className="rank-value">{users.length}</div>
+                        <div className="rank-value">{users.filter(u => u.eduId !== '1000000').length}</div>
                       </div>
                     )}
                   </div>
