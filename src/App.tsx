@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Settings, Search, Users, LayoutDashboard,
-  User, CheckCircle2, Globe, MapPin, Trophy,
+  Settings, Search, LayoutDashboard,
+  User, CheckCircle2, Globe, Trophy,
   LogOut, Shield, Edit3, ArrowLeft, BadgeCheck, MoreHorizontal, Eye, EyeOff, Heart, MessageCircle, Image as ImageIcon,
   AlertTriangle, TrendingUp, XCircle, Trash2, Copy
 } from 'lucide-react';
@@ -31,6 +31,7 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  
   const [showPassword, setShowPassword] = useState(false);
   const [activeView, setActiveView] = useState('dashboard');
   const [users, setUsers] = useState<any[]>([]);
@@ -58,7 +59,7 @@ export default function App() {
   const [openPostMenuId, setOpenPostMenuId] = useState<number | null>(null);
   const [commentsModalPostId, setCommentsModalPostId] = useState<number | null>(null);
   const [followersModal, setFollowersModal] = useState<{type: "followers" | "following", userId: number} | null>(null);
-  const [postMenuId, setPostMenuId] = useState<number | null>(null);
+  
   const [editAchievements, setEditAchievements] = useState<any[]>([]);
   const [newAchievement, setNewAchievement] = useState("");
   const [newAchievementImage, setNewAchievementImage] = useState("");
@@ -100,15 +101,13 @@ export default function App() {
     if (currentUser) {
       setEditName(currentUser.name || "Dostonbek Ruzmatov");
       setEditUsername(currentUser.username || "@d_ruzmatov");
-      setEditAvatar(currentUser.avatar || "\https://ui-avatars.com/api/?name=&background=random&color=fff\");
+      setEditAvatar(currentUser.avatar || "https://ui-avatars.com/api/?name=User&background=random&color=fff");
       setEditAchievements(currentUser.achievements?.filter((a:any) => a.title !== "Educal Yaratuvchisi") || []);
     }
   }, [currentUser?.id]);
 
-  const [isSaving, setIsSaving] = useState(false);
   const handleSaveProfile = async () => {
     try {
-      setIsSaving(true);
       setIsSaving(true);
       const res = await fetch(API_URL + '/api/users/profile', {
         method: 'PUT',
@@ -522,15 +521,15 @@ export default function App() {
                               <div style={{ position: 'absolute', right: 0, top: '24px', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
                                 <div 
                                   onClick={() => { 
-                                    navigator.clipboard.writeText(`http://localhost:5173/post/${post.id}`); 
-                                    showToast("Post havolasi nusxalandi!", "success"); 
+                                    navigator.clipboard.writeText(post.content); 
+                                    showToast("Matn nusxalandi!", "success"); 
                                     setOpenPostMenuId(null); 
                                   }}
                                   style={{ padding: '10px 16px', cursor: 'pointer', fontSize: '13px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '8px' }}
                                 >
                                   <Copy size={16} /> Nusxa olish
                                 </div>
-                                {post.userId === (currentUser?.id || 1) && (
+                                {(post.userId === currentUser?.id || currentUser?.eduId === '1000001') && (
                                   <div 
                                     onClick={async () => {
                                       setConfirmDialog({
