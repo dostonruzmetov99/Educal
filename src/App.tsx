@@ -426,7 +426,7 @@ export default function App() {
 
         <div className="sidebar-bottom">
           <div className="user-profile-btn" onClick={() => handleProfileView(currentUser)}>
-            <img src={currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || "User")}&background=random`} alt="User" className="user-avatar" />
+            <img loading="lazy" src={currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || "User")}&background=random`} alt="User" className="user-avatar" />
             <div className="user-details">
               <h4 style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 {currentUser.name} {currentUser.isVerified && <VerifiedBadge size={16} />}
@@ -475,7 +475,7 @@ export default function App() {
               <div style={{ position: 'absolute', top: '40px', left: 0, right: 0, background: 'var(--bg-card)', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 10, maxHeight: '300px', overflowY: 'auto', border: '1px solid var(--border-light)' }}>
                 {searchResults.map(u => (
                   <div key={u.id} onClick={() => { handleProfileView(u); setSearchQuery(""); }} style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', borderBottom: '1px solid var(--border-light)' }}>
-                    <img src={u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'User')}&background=random`} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+                    <img loading="lazy" src={u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'User')}&background=random`} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
                     <span style={{ fontWeight: 500 }}>{u.name} <span style={{fontSize: '12px', color: 'var(--text-muted)'}}>{u.username}</span></span>
                   </div>
                 ))}
@@ -508,7 +508,7 @@ export default function App() {
                     onChange={(e) => setNewPostText(e.target.value)}
                     style={{ width: '100%', border: 'none', outline: 'none', resize: 'none', minHeight: '60px', fontFamily: 'inherit', fontSize: '15px', background: 'transparent' }}
                   />
-                  {newPostImage && <img src={newPostImage} style={{ width: '100px', borderRadius: '8px', marginTop: '8px' }} alt="preview" />}
+                  {newPostImage && <img loading="lazy" src={newPostImage} style={{ width: '100px', borderRadius: '8px', marginTop: '8px' }} alt="preview" />}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', color: 'var(--primary-color)', background: '#eef2ff', padding: '6px 12px', borderRadius: '6px', fontWeight: 500 }}>
@@ -543,7 +543,7 @@ export default function App() {
                               }
                             }}
                           >
-                            <img src={post.user?.avatar || `https://ui-avatars.com/api/?name=${post.user?.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                            <img loading="lazy" src={post.user?.avatar || `https://ui-avatars.com/api/?name=${post.user?.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                               <h4 style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', margin: 0, whiteSpace: 'nowrap' }}>
                                 {post.user?.name} {(post.user?.isVerified || post.user?.eduId === '1000001') && <VerifiedBadge size={16} />}
@@ -597,7 +597,7 @@ export default function App() {
                         {post.imageUrl && (
                           post.imageUrl.match(/\.(mp4|webm|mov)$/i) || post.imageUrl.includes('video/upload') ? 
                             <video src={post.imageUrl} controls style={{ width: '100%', borderRadius: '8px', marginBottom: '16px', maxHeight: '500px', backgroundColor: 'black' }} /> :
-                            <img src={post.imageUrl} style={{ width: '100%', borderRadius: '8px', marginBottom: '16px' }} />
+                            <img loading="lazy" src={post.imageUrl} style={{ width: '100%', borderRadius: '8px', marginBottom: '16px' }} />
                         )}
                         
                         <div style={{ display: 'flex', gap: '16px', borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
@@ -660,7 +660,7 @@ export default function App() {
                       <div style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-muted)', width: '30px', textAlign: 'center' }}>
                         {index + 1}
                       </div>
-                      <img src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }} />
+                      <img loading="lazy" src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }} />
                       <div style={{ flex: 1 }}>
                         <h4 style={{ fontWeight: 600, fontSize: '16px', margin: '0 0 4px 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
                           {user.name} {user.isVerified && <VerifiedBadge size={16} />}
@@ -697,7 +697,7 @@ export default function App() {
                       <div style={{ fontSize: '20px', fontWeight: 700, color: index === 0 ? '#f59e0b' : index === 1 ? '#9ca3af' : index === 2 ? '#d97706' : 'var(--text-muted)', width: '30px', textAlign: 'center' }}>
                         #{index + 1}
                       </div>
-                      <img src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} alt="Avatar" style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '50%', border: index < 3 ? `2px solid ${index === 0 ? '#f59e0b' : index === 1 ? '#9ca3af' : '#d97706'}` : 'none' }} />
+                      <img loading="lazy" src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} alt="Avatar" style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '50%', border: index < 3 ? `2px solid ${index === 0 ? '#f59e0b' : index === 1 ? '#9ca3af' : '#d97706'}` : 'none' }} />
                       <div style={{ flex: 1 }}>
                         <h4 style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', fontSize: '16px', margin: '0 0 4px 0' }}>
                           {user.name} {user.isVerified && <VerifiedBadge size={16} />}
@@ -721,7 +721,7 @@ export default function App() {
                   {users.map((user: any) => (
                     <div className="card" key={user.id} onClick={() => handleProfileView(user)} style={{ cursor: 'pointer' }}>
                       <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px' }}>
-                        <img src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} alt="Avatar" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
+                        <img loading="lazy" src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} alt="Avatar" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
                         <div>
                           <h4 style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
                             {user.name} {user.isVerified && <VerifiedBadge size={16} />}
@@ -874,7 +874,7 @@ export default function App() {
                   <div style={{marginBottom: '24px'}}>
                     <label style={{display: 'block', marginBottom: '8px', fontWeight: 600}}>Rasm yuklash</label>
                     <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                      <img src={editAvatar} alt="Preview" style={{width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border-light)'}} />
+                      <img loading="lazy" src={editAvatar} alt="Preview" style={{width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border-light)'}} />
                       <input type="file" accept="image/*" onChange={handleImageUpload} style={{flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid var(--border-light)'}} />
                     </div>
                   </div>
@@ -885,14 +885,14 @@ export default function App() {
                       <input type="text" value={newAchievement} onChange={(e) => setNewAchievement(e.target.value)} placeholder="Masalan: IELTS, IT Sertifikat, Maktab Baholari..." style={{padding: '10px', borderRadius: '6px', border: '1px solid var(--border-light)', outline: 'none'}} />
                       <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
                         <input type="file" accept="image/*" onChange={handleAchievementImageUpload} style={{flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid var(--border-light)', fontSize: '13px'}} />
-                        {newAchievementImage && <img src={newAchievementImage} alt="Preview" style={{width: '40px', height: '40px', objectFit: 'cover', borderRadius: '6px', border: '1px solid var(--border-light)'}} />}
+                        {newAchievementImage && <img loading="lazy" src={newAchievementImage} alt="Preview" style={{width: '40px', height: '40px', objectFit: 'cover', borderRadius: '6px', border: '1px solid var(--border-light)'}} />}
                         <button onClick={() => { if(newAchievement) { setEditAchievements([...editAchievements, {id: Date.now(), title: newAchievement, image: newAchievementImage}]); setNewAchievement(""); setNewAchievementImage(""); } }} style={{background: 'var(--text-main)', color: 'white', padding: '10px 20px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 500}}>Qo'shish</button>
                       </div>
                     </div>
                     {editAchievements.map((ach: any) => (
                       <div key={ach.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'white', borderRadius: '6px', border: '1px solid var(--border-light)', marginBottom: '4px'}}>
                         <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                          {ach.image && <img src={ach.image} alt={ach.title} style={{width: '30px', height: '30px', objectFit: 'cover', borderRadius: '4px'}} />}
+                          {ach.image && <img loading="lazy" src={ach.image} alt={ach.title} style={{width: '30px', height: '30px', objectFit: 'cover', borderRadius: '4px'}} />}
                           <span>{ach.title}</span>
                         </div>
                         <span onClick={() => setEditAchievements(editAchievements.filter(a => a.id !== ach.id))} style={{color: '#ef4444', cursor: 'pointer', fontWeight: 600}}>✕</span>
@@ -1057,7 +1057,7 @@ export default function App() {
 
                 <div className="profile-cover"></div>
                 <div className="profile-info-box">
-                  <img src={selectedUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name || 'User')}&background=random`} alt="Avatar" className="profile-large-avatar" />
+                  <img loading="lazy" src={selectedUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name || 'User')}&background=random`} alt="Avatar" className="profile-large-avatar" />
 
                   <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                     <div>
@@ -1135,7 +1135,7 @@ export default function App() {
                       {selectedUser.achievements && selectedUser.achievements.filter((a:any) => a.title !== 'Educal Yaratuvchisi').map((ach: any) => (
                         <div key={ach.id} style={{ background: '#f9fafb', border: '1px solid var(--border-light)', padding: '16px', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', fontWeight: 500, minWidth: '140px', textAlign: 'center' }}>
                           {ach.image ? (
-                            <img src={ach.image} alt={ach.title} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                            <img loading="lazy" src={ach.image} alt={ach.title} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
                           ) : (
                             <CheckCircle2 size={32} color="#10b981" />
                           )}
@@ -1156,7 +1156,7 @@ export default function App() {
                         <div className="card" key={post.id}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', marginBottom: '16px' }}>
                             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                              <img src={post.user?.avatar || `https://ui-avatars.com/api/?name=${post.user?.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                              <img loading="lazy" src={post.user?.avatar || `https://ui-avatars.com/api/?name=${post.user?.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                               <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <h4 style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', margin: 0, whiteSpace: 'nowrap' }}>
                                   {post.user?.name} {(post.user?.isVerified || post.user?.eduId === '1000001') && <VerifiedBadge size={16} />}
@@ -1210,7 +1210,7 @@ export default function App() {
                           {post.imageUrl && (
                             post.imageUrl.match(/\.(mp4|webm|mov)$/i) || post.imageUrl.includes('video/upload') ? 
                               <video src={post.imageUrl} controls style={{ width: '100%', borderRadius: '8px', marginBottom: '16px', maxHeight: '500px', backgroundColor: 'black' }} /> :
-                              <img src={post.imageUrl} style={{ width: '100%', borderRadius: '8px', marginBottom: '16px' }} />
+                              <img loading="lazy" src={post.imageUrl} style={{ width: '100%', borderRadius: '8px', marginBottom: '16px' }} />
                           )}
                           
                           <div style={{ display: 'flex', gap: '16px', borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
@@ -1264,7 +1264,7 @@ export default function App() {
       <div style={{ padding: '16px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {users.filter(u => followersModal.type === 'followers' ? u.followingRel?.some((f:any)=>f.followingId === followersModal.userId) : u.followedBy?.some((f:any)=>f.followerId === followersModal.userId)).map(u => (
           <div key={u.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => { handleProfileView(u); setFollowersModal(null); }}>
-            <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+            <img loading="lazy" src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
             <div>
               <div style={{ fontWeight: 600 }}>{u.name}</div>
               <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{u.username}</div>
