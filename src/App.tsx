@@ -146,17 +146,30 @@ export default function App() {
   };
 
   const handleFollow = async (id: number) => {
+    const isCurrentlyFollowing = followingList.includes(id);
+    setFollowingList(isCurrentlyFollowing ? followingList.filter(fid => fid !== id) : [...followingList, id]);
+    
+    if (selectedUser && selectedUser.id === id) {
+      setSelectedUser({
+        ...selectedUser,
+        followedBy: isCurrentlyFollowing 
+          ? (selectedUser.followedBy || []).filter((f:any) => f.followerId !== currentUser?.id)
+          : [...(selectedUser.followedBy || []), { followerId: currentUser?.id }]
+      });
+    }
+    
+    setUsers(users.map(u => u.id === id ? {
+      ...u,
+      followedBy: isCurrentlyFollowing
+        ? (u.followedBy || []).filter((f:any) => f.followerId !== currentUser?.id)
+        : [...(u.followedBy || []), { followerId: currentUser?.id }]
+    } : u));
+
     try {
-      const res = await fetch(`${API_URL}/api/users/${id}/follow`, {
+      await fetch(`${API_URL}/api/users/${id}/follow`, {
         method: 'POST',
         headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
       });
-      const data = await res.json();
-      if (data.following) {
-        setFollowingList([...followingList, id]);
-      } else {
-        setFollowingList(followingList.filter(fid => fid !== id));
-      }
     } catch(e) {
       showToast("Xatolik", "error");
     } finally { setIsSaving(false); }
@@ -607,7 +620,7 @@ export default function App() {
               <div>
                 <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><Trophy size={28} color="#f59e0b" /> Dunyoviy Top Reyting</h2>
                 <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-                  {[...users].sort((a, b) => {
+                  {[...users].filter(u => u.eduId !== '1000000').sort((a, b) => {
                     if(a.level==='Bot') return 1; if(b.level==='Bot') return -1; const levelA = a.level === 'Asoschi' ? 1000 : parseInt(a.level || '1');
                     const levelB = b.level === 'Asoschi' ? 1000 : parseInt(b.level || '1');
                     return levelB - levelA;
