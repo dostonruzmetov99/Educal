@@ -367,11 +367,18 @@ export default function App() {
             <span>Asosiy Ekran</span>
           </div>
           <div
-            className={`nav-item ${activeView === 'students' ? 'active' : ''}`}
-            onClick={() => setActiveView('students')}
+            className={`nav-item ${activeView === 'messages' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveView('messages');
+              if (currentUser?.level === 'Asoschi') {
+                fetch(API_URL + '/api/reports', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } })
+                  .then(r => r.json())
+                  .then(data => { if(Array.isArray(data)) setBotMessages(data); });
+              }
+            }}
           >
-            <Users size={20} />
-            <span>O'quvchilar</span>
+            <MessageCircle size={20} />
+            <span>Xabarlar</span>
           </div>
           <div
             className={`nav-item ${activeView === 'ranking' ? 'active' : ''}`}
@@ -386,20 +393,6 @@ export default function App() {
           >
             <Settings size={20} />
             <span>Sozlamalar</span>
-          </div>
-          <div
-            className={`nav-item ${activeView === 'messages' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveView('messages');
-              if (currentUser?.level === 'Asoschi') {
-                fetch(API_URL + '/api/reports', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } })
-                  .then(r => r.json())
-                  .then(data => { if(Array.isArray(data)) setBotMessages(data); });
-              }
-            }}
-          >
-            <MessageCircle size={20} />
-            <span>Xabarlar</span>
           </div>
         </div>
 
