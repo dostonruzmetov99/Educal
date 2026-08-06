@@ -41,6 +41,7 @@ export default function App() {
   const [newPostText, setNewPostText] = useState("");
   const [newPostImage, setNewPostImage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [commentText, setCommentText] = useState<{ [key: number]: string }>({});
   const [followingList, setFollowingList] = useState<number[]>([]);
   const [editName, setEditName] = useState("Dostonbek Ruzmatov");
@@ -443,29 +444,33 @@ export default function App() {
               type="text" 
               placeholder="Qidiruv: foydalanuvchilar, ID..."
               value={searchQuery}
-              onChange={async (e) => {
+              onChange={(e) => {
                 const val = e.target.value;
                 setSearchQuery(val);
                 if (val.trim().length > 0) {
-                  try {
-                    const res = await fetch(API_URL + '/api/users/search?q=' + encodeURIComponent(val), {
-                      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-                    });
-                    const result = await res.json();
-                    setUsers(result);
-                  } catch(e) {}
+                  const query = val.toLowerCase();
+                  const results = users.filter(u => 
+                    u.eduId !== '1000000' && (
+                      (u.name && u.name.toLowerCase().includes(query)) ||
+                      (u.username && u.username.toLowerCase().includes(query)) ||
+                      (String(u.eduId).includes(query))
+                    )
+                  );
+                  setSearchResults(results);
+                } else {
+                  setSearchResults([]);
                 }
               }}
             />
             {searchQuery && (
               <div style={{ position: 'absolute', top: '40px', left: 0, right: 0, background: 'var(--bg-card)', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 10, maxHeight: '300px', overflowY: 'auto', border: '1px solid var(--border-light)' }}>
-                {users.map(u => (
+                {searchResults.map(u => (
                   <div key={u.id} onClick={() => { handleProfileView(u); setSearchQuery(""); }} style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', borderBottom: '1px solid var(--border-light)' }}>
-                    <img src={u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'User')}&background=random`} style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+                    <img src={u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'User')}&background=random`} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
                     <span style={{ fontWeight: 500 }}>{u.name} <span style={{fontSize: '12px', color: 'var(--text-muted)'}}>{u.username}</span></span>
                   </div>
                 ))}
-                {users.length === 0 && (
+                {searchResults.length === 0 && (
                   <div style={{ padding: '12px', color: 'var(--text-muted)', textAlign: 'center' }}>Hech kim topilmadi</div>
                 )}
               </div>
