@@ -1065,6 +1065,57 @@ export default function App() {
                       )}
                     </div>
                   </div>
+
+                  <div style={{ marginTop: '48px', maxWidth: '500px' }}>
+                    <h3 style={{ fontSize: '20px', marginBottom: '16px', fontWeight: 700 }}>{selectedUser.name} Postlari</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      {posts.filter(p => p.userId === selectedUser.id).map(post => (
+                        <div key={post.id} style={{ background: 'var(--bg-card)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
+                          <p style={{ marginBottom: '12px', fontSize: '15px', whiteSpace: 'pre-wrap' }}>{post.content}</p>
+                          {post.imageUrl && (
+                            post.imageUrl.match(/\.(mp4|webm|mov)$/i) || post.imageUrl.includes('video/upload') ? 
+                              <video src={post.imageUrl} controls style={{ width: '100%', borderRadius: '8px', marginBottom: '12px', maxHeight: '500px', backgroundColor: 'black' }} /> :
+                              <img src={post.imageUrl} style={{ width: '100%', borderRadius: '8px', marginBottom: '12px', objectFit: 'cover' }} />
+                          )}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                              {new Date(post.createdAt).toLocaleDateString()} {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                            </span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                              <button 
+                                onClick={() => {
+                                  const isLiked = (post.likes || []).some((l:any) => l.userId === (currentUser?.id || 1));
+                                  setPosts(posts.map(p => p.id === post.id ? {
+                                    ...p,
+                                    likes: isLiked 
+                                      ? (p.likes || []).filter((l:any) => l.userId !== (currentUser?.id || 1))
+                                      : [...(p.likes || []), {userId: currentUser?.id || 1}]
+                                  } : p));
+                                  fetch(`${API_URL}/api/posts/${post.id}/like`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                                    body: JSON.stringify({ userId: currentUser?.id || 1 })
+                                  }).catch(() => {});
+                                }}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', color: (post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'var(--text-muted)' }}
+                              >
+                                <Heart size={16} fill={(post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'none'} color={(post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'currentColor'} /> 
+                                <span>{(post.likes || []).length}</span>
+                              </button>
+                              {(currentUser?.id === selectedUser.id || currentUser?.eduId === '1000001') && (
+                                <button onClick={() => {
+                                  setPosts(posts.filter(p => p.id !== post.id));
+                                  fetch(`${API_URL}/api/posts/${post.id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } }).catch(()=>console.error("Xato"));
+                                }} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>O'chirish</button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {posts.filter(p => p.userId === selectedUser.id).length === 0 && <p style={{ color: 'var(--text-muted)' }}>Hozircha postlar yo'q.</p>}
+                    </div>
+                  </div>
+
                 </div>
               </div>
             )}
