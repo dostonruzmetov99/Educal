@@ -624,6 +624,44 @@ export default function App() {
             )}
 
             
+            {activeView === 'all-users' && (
+              <div>
+                <div style={{ marginBottom: '20px' }}>
+                   <button onClick={() => setActiveView('profile')} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)' }}>
+                      <ArrowLeft size={16} /> Orqaga
+                   </button>
+                </div>
+                <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><Globe size={28} color="#0095F6" /> Barcha Foydalanuvchilar</h2>
+                <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+                  {[...users].filter(u => u.eduId !== '1000000').map((user: any, index: number) => (
+                    <div 
+                      key={user.id} 
+                      onClick={() => handleProfileView(user)} 
+                      style={{ 
+                        display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 24px', 
+                        borderBottom: '1px solid var(--border-light)', cursor: 'pointer',
+                        background: 'transparent'
+                      }}
+                    >
+                      <div style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-muted)', width: '30px', textAlign: 'center' }}>
+                        {index + 1}
+                      </div>
+                      <img src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }} />
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ fontWeight: 600, fontSize: '16px', margin: '0 0 4px 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          {user.name} {user.isVerified && <VerifiedBadge size={16} />}
+                        </h4>
+                        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>{user.username}</p>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span className="badge">{getLevelDisplay(user)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {activeView === 'ranking' && (
               <div>
                 <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><Trophy size={28} color="#f59e0b" /> Dunyoviy Top Reyting</h2>
@@ -1060,10 +1098,12 @@ export default function App() {
                   </div>
 
                   <div className="rank-boxes" style={{ marginTop: '32px', maxWidth: '500px' }}>
-                    <div className="rank-box">
-                      <div className="rank-label"><Globe size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Global</div>
-                      <div className="rank-value">{users.length}</div>
-                    </div>
+                    {selectedUser.id === currentUser.id && currentUser.eduId === '1000001' && (
+                      <div className="rank-box" style={{ cursor: 'pointer' }} onClick={() => setActiveView('all-users')}>
+                        <div className="rank-label"><Globe size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Global</div>
+                        <div className="rank-value">{users.length}</div>
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ marginTop: '40px' }}>
