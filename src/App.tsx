@@ -808,7 +808,7 @@ export default function App() {
                 
                 <div className="card">
                   <div style={{marginBottom: '16px'}}>
-                    <label style={{display: 'block', marginBottom: '8px', fontWeight: 600}}>Ism va Familiya</label>
+                    <label style={{display: 'block', marginBottom: '8px', fontWeight: 600}}>Ism</label>
                     <input type="text" value={editName} onChange={(e) => setEditName(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '15px'}} />
                   </div>
                   <div style={{marginBottom: '16px'}}>
@@ -979,8 +979,15 @@ export default function App() {
                                   setConfirmDialog({
                                     msg: "Rostan ham bu akkountni o'chirmoqchimisiz?",
                                     onConfirm: () => {
-                                      showToast("Akkount o'chirildi!", "success");
-                                      setShowMenu(false);
+                                      setTimeout(() => {
+                                        setConfirmDialog({
+                                          msg: "O'chirishga ishonchingiz komilmi?",
+                                          onConfirm: () => {
+                                            showToast("Akkount o'chirildi!", "success");
+                                            setShowMenu(false);
+                                          }
+                                        });
+                                      }, 100);
                                     }
                                   });
                                 }}
