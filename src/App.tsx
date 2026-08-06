@@ -669,7 +669,7 @@ export default function App() {
 
             {activeView === 'ranking' && (
               <div>
-                <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><Trophy size={28} color="#f59e0b" /> Dunyoviy Top Reyting</h2>
+                <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><Trophy size={28} color="#f59e0b" /> Top Reyting</h2>
                 <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
                   {[...users].filter(u => u.eduId !== '1000000').sort((a, b) => {
                     if(a.level==='Bot') return 1; if(b.level==='Bot') return -1; const levelA = a.level === 'Asoschi' ? 1000 : parseInt(a.level || '1');
