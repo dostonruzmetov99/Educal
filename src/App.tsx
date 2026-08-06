@@ -1027,10 +1027,16 @@ export default function App() {
 
                   <div className="rank-boxes" style={{ marginTop: '32px', maxWidth: '500px' }}>
                     {selectedUser.id === currentUser.id && (
-                      <div className="rank-box">
-                        <div className="rank-label"><span style={{ marginRight: '6px' }}>{selectedUser.countryFlag || '🇺🇿'}</span>O'quvchilari</div>
-                        <div className="rank-value">{selectedUser.followedBy?.length || 0}</div>
-                      </div>
+                      <>
+                        <div className="rank-box">
+                          <div className="rank-label"><Globe size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Global</div>
+                          <div className="rank-value">{selectedUser.level === 'Asoschi' ? 1 : Math.max(1, 1000 - parseInt(selectedUser.level||'1') * 5)}</div>
+                        </div>
+                        <div className="rank-box">
+                          <div className="rank-label"><span style={{ marginRight: '6px' }}>{selectedUser.countryFlag || '🇺🇿'}</span>O'quvchilari</div>
+                          <div className="rank-value">{selectedUser.followedBy?.length || 0}</div>
+                        </div>
+                      </>
                     )}
                   </div>
 
@@ -1065,47 +1071,97 @@ export default function App() {
 
                   <div style={{ marginTop: '48px', maxWidth: '500px' }}>
                     <h3 style={{ fontSize: '20px', marginBottom: '16px', fontWeight: 700 }}>{selectedUser.name} Postlari</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div className="grid-layout">
                       {posts.filter(p => p.userId === selectedUser.id).map(post => (
-                        <div key={post.id} style={{ background: 'var(--bg-card)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-                          <p style={{ marginBottom: '12px', fontSize: '15px', whiteSpace: 'pre-wrap' }}>{post.content}</p>
-                          {post.imageUrl && (
-                            post.imageUrl.match(/\.(mp4|webm|mov)$/i) || post.imageUrl.includes('video/upload') ? 
-                              <video src={post.imageUrl} controls style={{ width: '100%', borderRadius: '8px', marginBottom: '12px', maxHeight: '500px', backgroundColor: 'black' }} /> :
-                              <img src={post.imageUrl} style={{ width: '100%', borderRadius: '8px', marginBottom: '12px', objectFit: 'cover' }} />
-                          )}
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                              {new Date(post.createdAt).toLocaleDateString()} {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                            </span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                              <button 
-                                onClick={() => {
-                                  const isLiked = (post.likes || []).some((l:any) => l.userId === (currentUser?.id || 1));
-                                  setPosts(posts.map(p => p.id === post.id ? {
-                                    ...p,
-                                    likes: isLiked 
-                                      ? (p.likes || []).filter((l:any) => l.userId !== (currentUser?.id || 1))
-                                      : [...(p.likes || []), {userId: currentUser?.id || 1}]
-                                  } : p));
-                                  fetch(`${API_URL}/api/posts/${post.id}/like`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-                                    body: JSON.stringify({ userId: currentUser?.id || 1 })
-                                  }).catch(() => {});
-                                }}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', color: (post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'var(--text-muted)' }}
-                              >
-                                <Heart size={16} fill={(post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'none'} color={(post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'currentColor'} /> 
-                                <span>{(post.likes || []).length}</span>
-                              </button>
-                              {(currentUser?.id === selectedUser.id || currentUser?.eduId === '1000001') && (
-                                <button onClick={() => {
-                                  setPosts(posts.filter(p => p.id !== post.id));
-                                  fetch(`${API_URL}/api/posts/${post.id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } }).catch(()=>console.error("Xato"));
-                                }} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>O'chirish</button>
+                        <div className="card" key={post.id}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', marginBottom: '16px' }}>
+                            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                              <img src={post.user?.avatar || `https://ui-avatars.com/api/?name=${post.user?.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <h4 style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', margin: 0, whiteSpace: 'nowrap' }}>
+                                  {post.user?.name} {(post.user?.isVerified || post.user?.eduId === '1000001') && <VerifiedBadge size={16} />}
+                                </h4>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
+                                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{post.user?.username}</span>
+                                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>•</span>
+                                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{new Date(post.createdAt).toLocaleDateString()} {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                  <span className="badge" style={{ fontSize: '10px', padding: '2px 8px' }}>{getLevelDisplay(post.user)}</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div style={{ position: 'relative' }}>
+                              <MoreHorizontal size={20} color="var(--text-muted)" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setOpenPostMenuId(openPostMenuId === post.id ? null : post.id); }} />
+                              {openPostMenuId === post.id && (
+                                <div style={{ position: 'absolute', right: 0, top: '24px', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
+                                  <div 
+                                    onClick={() => { 
+                                      navigator.clipboard.writeText(post.content); 
+                                      showToast("Matn nusxalandi!", "success"); 
+                                      setOpenPostMenuId(null); 
+                                    }}
+                                    style={{ padding: '10px 16px', cursor: 'pointer', fontSize: '13px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '8px' }}
+                                  >
+                                    <Copy size={16} /> Nusxa olish
+                                  </div>
+                                  {(post.userId === currentUser?.id || currentUser?.eduId === '1000001') && (
+                                    <div 
+                                      onClick={async () => {
+                                        setConfirmDialog({
+                                          msg: "Rostan ham bu postni o'chirib tashlamoqchimisiz?",
+                                          onConfirm: async () => {
+                                            try {
+                                              await fetch(`${API_URL}/api/posts/${post.id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+                                              setPosts(posts.filter(p => p.id !== post.id));
+                                            } catch (e) { showToast("Xatolik", "error"); }
+                                          }
+                                        });
+                                      }}
+                                      style={{ padding: '10px 16px', cursor: 'pointer', fontSize: '13px', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}
+                                    >
+                                      <Trash2 size={16} /> O'chirish
+                                    </div>
+                                  )}
+                                </div>
                               )}
                             </div>
+                          </div>
+                          <p style={{ fontSize: '14px', lineHeight: '1.5', marginBottom: '16px' }}>{post.content}</p>
+                          {post.imageUrl && (
+                            post.imageUrl.match(/\.(mp4|webm|mov)$/i) || post.imageUrl.includes('video/upload') ? 
+                              <video src={post.imageUrl} controls style={{ width: '100%', borderRadius: '8px', marginBottom: '16px', maxHeight: '500px', backgroundColor: 'black' }} /> :
+                              <img src={post.imageUrl} style={{ width: '100%', borderRadius: '8px', marginBottom: '16px' }} />
+                          )}
+                          
+                          <div style={{ display: 'flex', gap: '16px', borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
+                            <button 
+                              onClick={() => {
+                                const isLiked = (post.likes || []).some((l:any) => l.userId === (currentUser?.id || 1));
+                                setPosts(posts.map(p => p.id === post.id ? {
+                                  ...p,
+                                  likes: isLiked 
+                                    ? (p.likes || []).filter((l:any) => l.userId !== (currentUser?.id || 1))
+                                    : [...(p.likes || []), {userId: currentUser?.id || 1}]
+                                } : p));
+                                
+                                fetch(`${API_URL}/api/posts/${post.id}/like`, {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                                  body: JSON.stringify({ userId: currentUser?.id || 1 })
+                                }).catch(() => {});
+                              }}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', color: (post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'var(--text-muted)' }}
+                            >
+                              <Heart size={18} fill={(post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'none'} color={(post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'currentColor'} /> 
+                              <span>{(post.likes || []).length}</span>
+                            </button>
+                            <button 
+                              onClick={() => setCommentsModalPostId(post.id)}
+                              style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', cursor: 'pointer' }}
+                            >
+                              <MessageCircle size={18} />
+                              <span>{(post.comments || []).length}</span>
+                            </button>
                           </div>
                         </div>
                       ))}
