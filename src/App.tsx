@@ -560,19 +560,20 @@ export default function App() {
                         
                         <div style={{ display: 'flex', gap: '16px', borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
                           <button 
-                            onClick={async () => {
-                              try {
-                                const res = await fetch(`${API_URL}/api/posts/${post.id}/like`, {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-                                  body: JSON.stringify({ userId: currentUser?.id || 1 })
-                                });
-                                const data = await res.json();
-                                setPosts(posts.map(p => p.id === post.id ? {
-                                  ...p, 
-                                  likes: data.liked ? [...(p.likes||[]), {userId: currentUser?.id||1}] : (p.likes||[]).filter((l: any) => l.userId !== (currentUser?.id||1))
-                                } : p));
-                              } catch(e) {}
+                            onClick={() => {
+                              const isLiked = (post.likes || []).some((l:any) => l.userId === (currentUser?.id || 1));
+                              setPosts(posts.map(p => p.id === post.id ? {
+                                ...p,
+                                likes: isLiked 
+                                  ? (p.likes || []).filter((l:any) => l.userId !== (currentUser?.id || 1))
+                                  : [...(p.likes || []), {userId: currentUser?.id || 1}]
+                              } : p));
+                              
+                              fetch(`${API_URL}/api/posts/${post.id}/like`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                                body: JSON.stringify({ userId: currentUser?.id || 1 })
+                              }).catch(() => {});
                             }}
                             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', color: (post.likes || []).some((l:any) => l.userId === (currentUser?.id||1)) ? '#ef4444' : 'var(--text-muted)' }}
                           >
