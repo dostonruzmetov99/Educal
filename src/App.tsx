@@ -1050,7 +1050,7 @@ export default function App() {
                 <div className="profile-info-box">
                   <img src={selectedUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name || 'User')}&background=random`} alt="Avatar" className="profile-large-avatar" />
 
-                  <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                     <div>
                       <h2 style={{ fontSize: '28px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         {selectedUser.name} {selectedUser.isVerified && <VerifiedBadge size={28} />}
