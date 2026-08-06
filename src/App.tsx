@@ -345,7 +345,13 @@ export default function App() {
     );
   }
 
-  if (!currentUser) return null;
+  if (!currentUser) return (
+    <div style={{ display: 'flex', height: '100vh', width: '100vw', justifyContent: 'center', alignItems: 'center', background: 'var(--bg-main)', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'linear-gradient(135deg, var(--primary-color) 0%, #a855f7 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '24px', boxShadow: '0 4px 10px rgba(79, 70, 229, 0.3)' }}>Edu</div>
+      <h3 style={{ color: 'var(--text-main)', fontSize: '18px' }}>Yuklanmoqda...</h3>
+      <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Server uyg'onmoqda (biroz vaqt olishi mumkin)</p>
+    </div>
+  );
   return (
     <div className="dashboard-container">
 
