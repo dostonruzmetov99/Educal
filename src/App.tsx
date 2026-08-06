@@ -1069,7 +1069,7 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div style={{ marginTop: '48px', maxWidth: '500px' }}>
+                  </div><div style={{ marginTop: '24px', maxWidth: '500px' }}>
                     <h3 style={{ fontSize: '20px', marginBottom: '16px', fontWeight: 700 }}>{selectedUser.name} Postlari</h3>
                     <div className="grid-layout">
                       {posts.filter(p => p.userId === selectedUser.id).map(post => (
@@ -1169,7 +1169,6 @@ export default function App() {
                     </div>
                   </div>
 
-                </div>
               </div>
             )}
           </>
