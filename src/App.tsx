@@ -1034,8 +1034,27 @@ export default function App() {
                                       setTimeout(() => {
                                         setConfirmDialog({
                                           msg: "O'chirishga ishonchingiz komilmi?",
-                                          onConfirm: () => {
-                                            showToast("Akkount o'chirildi!", "success");
+                                          onConfirm: async () => {
+                                            try {
+                                              const res = await fetch(`${API_URL}/api/users/${selectedUser.id}`, {
+                                                method: 'DELETE',
+                                                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                                              });
+                                              if (res.ok) {
+                                                showToast("Akkount o'chirildi!", "success");
+                                                setUsers(users.filter(u => u.id !== selectedUser.id));
+                                                if (selectedUser.id === currentUser.id) {
+                                                  localStorage.clear();
+                                                  window.location.reload();
+                                                } else {
+                                                  setActiveView('dashboard');
+                                                }
+                                              } else {
+                                                showToast("Xatolik yuz berdi", "error");
+                                              }
+                                            } catch (e) {
+                                              showToast("Tarmoq xatosi", "error");
+                                            }
                                             setShowMenu(false);
                                           }
                                         });

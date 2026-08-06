@@ -377,6 +377,39 @@ app.put('/api/users/:id/verify', authMiddleware, async (req: any, res: any) => {
   }
 });
 
+// API: Userni o'chirish
+app.delete('/api/users/:id', authMiddleware, async (req: any, res: any) => {
+  try {
+    const userId = parseInt(req.params.id);
+    if (req.userId !== userId) {
+      const caller = await prisma.user.findUnique({ where: { id: req.userId } });
+      if (caller?.eduId !== '1000001') {
+        return res.status(403).json({ error: "Ruxsat yo'q" });
+      }
+    }
+    
+    await prisma.like.deleteMany({ where: { userId } });
+    await prisma.comment.deleteMany({ where: { userId } });
+    await prisma.achievement.deleteMany({ where: { userId } });
+    await prisma.follow.deleteMany({ where: { OR: [{ followerId: userId }, { followingId: userId }] } });
+    await prisma.report.deleteMany({ where: { OR: [{ reporterId: userId }, { reportedId: userId }] } });
+    await prisma.message.deleteMany({ where: { OR: [{ senderId: userId }, { receiverId: userId }] } });
+
+    const userPosts = await prisma.post.findMany({ where: { userId } });
+    const postIds = userPosts.map(p => p.id);
+    if (postIds.length > 0) {
+      await prisma.like.deleteMany({ where: { postId: { in: postIds } } });
+      await prisma.comment.deleteMany({ where: { postId: { in: postIds } } });
+      await prisma.post.deleteMany({ where: { userId } });
+    }
+
+    await prisma.user.delete({ where: { id: userId } });
+    res.json({ success: true });
+  } catch(e) {
+    res.status(500).json({ error: "Akkountni o'chirishda xatolik" });
+  }
+});
+
 // API: Obuna bo'lish / Bekor qilish
 app.post('/api/users/:id/follow', authMiddleware, async (req: any, res: any) => {
   try {
