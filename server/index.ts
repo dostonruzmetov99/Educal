@@ -655,6 +655,42 @@ app.post('/api/messages/:userId', authMiddleware, async (req: any, res: any) => 
   }
 });
 
+// 4. Delete a specific message
+app.delete('/api/messages/message/:msgId', authMiddleware, async (req: any, res: any) => {
+  try {
+    const msgId = parseInt(req.params.msgId);
+    const userId = req.userId;
+    const msg = await prisma.message.findUnique({ where: { id: msgId } });
+    if (!msg) return res.status(404).json({ error: "Xabar topilmadi" });
+    if (msg.senderId !== userId && msg.receiverId !== userId && req.level !== 'Asoschi') {
+      return res.status(403).json({ error: "Ruxsat yo'q" });
+    }
+    await prisma.message.delete({ where: { id: msgId } });
+    res.json({ success: true });
+  } catch(e) {
+    res.status(500).json({ error: "O'chirishda xatolik" });
+  }
+});
+
+// 5. Delete entire conversation
+app.delete('/api/messages/:userId', authMiddleware, async (req: any, res: any) => {
+  try {
+    const partnerId = parseInt(req.params.userId);
+    const userId = req.userId;
+    await prisma.message.deleteMany({
+      where: {
+        OR: [
+          { senderId: userId, receiverId: partnerId },
+          { senderId: partnerId, receiverId: userId }
+        ]
+      }
+    });
+    res.json({ success: true });
+  } catch(e) {
+    res.status(500).json({ error: "Suhbatni o'chirishda xatolik" });
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`Backend is running on http://localhost:${PORT}`);

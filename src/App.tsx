@@ -59,6 +59,8 @@ export default function App() {
   const [openPostMenuId, setOpenPostMenuId] = useState<number | null>(null);
   const [commentsModalPostId, setCommentsModalPostId] = useState<number | null>(null);
   const [followersModal, setFollowersModal] = useState<{type: "followers" | "following", userId: number} | null>(null);
+  const [openConvoMenuId, setOpenConvoMenuId] = useState<number | null>(null);
+  const [openMsgMenuId, setOpenMsgMenuId] = useState<number | null>(null);
   
   const [editAchievements, setEditAchievements] = useState<any[]>([]);
   const [newAchievement, setNewAchievement] = useState("");
@@ -953,11 +955,38 @@ export default function App() {
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {conversations.map((conv: any) => (
-                          <div key={conv.user.id} onClick={() => setActiveChatUserId(conv.user.id)} style={{ padding: '12px', borderRadius: '12px', background: activeChatUserId === conv.user.id ? '#eef2ff' : 'var(--bg-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <img src={conv.user.avatar || `https://ui-avatars.com/api/?name=${conv.user.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
-                            <div>
-                              <div style={{ fontWeight: 600, fontSize: '15px' }}>{conv.user.name}</div>
-                              <div style={{ fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '180px' }}>{conv.lastMessage?.text}</div>
+                          <div key={conv.user.id} onClick={() => setActiveChatUserId(conv.user.id)} style={{ padding: '12px', borderRadius: '12px', background: activeChatUserId === conv.user.id ? '#eef2ff' : 'var(--bg-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', overflow: 'hidden' }}>
+                              <img src={conv.user.avatar || `https://ui-avatars.com/api/?name=${conv.user.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0 }} alt="" />
+                              <div style={{ overflow: 'hidden' }}>
+                                <div style={{ fontWeight: 600, fontSize: '15px' }}>{conv.user.name}</div>
+                                <div style={{ fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }}>{conv.lastMessage?.text}</div>
+                              </div>
+                            </div>
+                            <div style={{ position: 'relative' }}>
+                              <button onClick={(e) => { e.stopPropagation(); setOpenConvoMenuId(openConvoMenuId === conv.user.id ? null : conv.user.id); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '4px' }}>
+                                <MoreHorizontal size={20} />
+                              </button>
+                              {openConvoMenuId === conv.user.id && (
+                                <div style={{ position: 'absolute', right: 0, top: '100%', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
+                                  <div onClick={async (e) => {
+                                    e.stopPropagation();
+                                    setConfirmDialog({
+                                      msg: "Ushbu suhbatni o'chirmoqchimisiz? (Ikkala tomon uchun ham o'chadi)",
+                                      onConfirm: async () => {
+                                        try {
+                                          await fetch(`${API_URL}/api/messages/${conv.user.id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+                                          setConversations(conversations.filter(c => c.user.id !== conv.user.id));
+                                          if (activeChatUserId === conv.user.id) setActiveChatUserId(null);
+                                        } catch (e) {}
+                                      }
+                                    });
+                                    setOpenConvoMenuId(null);
+                                  }} style={{ padding: '10px 16px', cursor: 'pointer', fontSize: '13px', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Trash2 size={16} /> O'chirish
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -986,8 +1015,33 @@ export default function App() {
                             {chatMessages.map((msg: any) => {
                               const isMe = msg.senderId === currentUser?.id;
                               return (
-                                <div key={msg.id} style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '70%', padding: '10px 16px', borderRadius: '16px', background: isMe ? 'var(--primary-color)' : '#f3f4f6', color: isMe ? 'white' : 'var(--text-main)', fontSize: '15px' }}>
-                                  {msg.text}
+                                <div key={msg.id} style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '70%', display: 'flex', alignItems: 'center', gap: '8px', flexDirection: isMe ? 'row-reverse' : 'row' }}>
+                                  <div style={{ padding: '10px 16px', borderRadius: '16px', background: isMe ? 'var(--primary-color)' : '#f3f4f6', color: isMe ? 'white' : 'var(--text-main)', fontSize: '15px' }}>
+                                    {msg.text}
+                                  </div>
+                                  <div style={{ position: 'relative' }}>
+                                    <button onClick={() => setOpenMsgMenuId(openMsgMenuId === msg.id ? null : msg.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px', display: 'flex', alignItems: 'center' }}>
+                                      <MoreHorizontal size={16} />
+                                    </button>
+                                    {openMsgMenuId === msg.id && (
+                                      <div style={{ position: 'absolute', [isMe ? 'right' : 'left']: '100%', top: 0, background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '130px', margin: '0 8px' }}>
+                                        <div onClick={async () => {
+                                          setConfirmDialog({
+                                            msg: "Ushbu xabarni o'chirmoqchimisiz? (Ikkala tomon uchun ham o'chadi)",
+                                            onConfirm: async () => {
+                                              try {
+                                                await fetch(`${API_URL}/api/messages/message/${msg.id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+                                                setChatMessages(chatMessages.filter(m => m.id !== msg.id));
+                                              } catch (e) {}
+                                            }
+                                          });
+                                          setOpenMsgMenuId(null);
+                                        }} style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '12px', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                          <Trash2 size={14} /> O'chirish
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               );
                             })}
