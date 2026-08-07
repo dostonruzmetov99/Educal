@@ -944,7 +944,7 @@ export default function App() {
                       <div style={{ marginBottom: '20px', padding: '12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px' }}>
                         <h4 style={{ color: '#b91c1c', marginBottom: '8px' }}>Shikoyatlar ({botMessages.length})</h4>
                         {botMessages.map((msg: any) => (
-                          <p key={msg.id} style={{ margin: 0, fontSize: '12px', color: '#7f1d1d' }}>{msg.reporter?.name} -> {msg.reportedUser?.name}</p>
+                          <p key={msg.id} style={{ margin: 0, fontSize: '12px', color: '#7f1d1d' }}>{msg.reporter?.name} {"->"} {msg.reportedUser?.name}</p>
                         ))}
                       </div>
                     )}
@@ -1590,7 +1590,7 @@ export default function App() {
                 />
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                   <button onClick={() => setPromptDialog(null)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '8px 16px', borderRadius: '8px' }}>Bekor qilish</button>
-                  <button onClick={() => { promptDialog.onConfirm(promptDialog.val); setPromptDialog(null); }} style={{ background: 'var(--primary-color)', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 600, padding: '8px 16px', borderRadius: '8px' }}>Saqlash</button>
+                  <button onClick={() => { promptDialog.onConfirm(promptDialog.val || ""); setPromptDialog(null); }} style={{ background: 'var(--primary-color)', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 600, padding: '8px 16px', borderRadius: '8px' }}>Saqlash</button>
                 </div>
               </div>
             </div>
