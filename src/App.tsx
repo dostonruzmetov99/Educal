@@ -742,37 +742,6 @@ export default function App() {
                 </div>
               </div>
             )}
-            {activeView === 'students' && (
-              <div>
-                <h2 style={{ marginBottom: '24px', fontSize: '24px' }}>Barcha O'quvchilar</h2>
-                <div className="grid-layout">
-                  {users.filter(u => u.eduId !== '1000000' && u.name !== 'Educal Bot').map((user: any) => (
-                    <div className="card" key={user.id} onClick={() => handleProfileView(user)} style={{ cursor: 'pointer' }}>
-                      <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px' }}>
-                        <img loading="lazy" src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} alt="Avatar" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
-                        <div>
-                          <h4 style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            {user.name} {user.isVerified && <VerifiedBadge size={16} />}
-                          </h4>
-                          <span className="badge">{getLevelDisplay(user)}</span>
-                        </div>
-                      </div>
-                      <div className="rank-boxes">
-                        <div className="rank-box">
-                          <div className="rank-label"><Globe size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> Global</div>
-                          <div className="rank-value">{user.globalRank || '-'}</div>
-                        </div>
-                        <div className="rank-box">
-                          <div className="rank-label"><span style={{ marginRight: '6px' }}>{user.countryFlag || '🇺🇿'}</span> Davlat</div>
-                          <div className="rank-value">{user.countryRank || '-'}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {activeView === 'settings' && (
               <div>
                 <h2 style={{ marginBottom: '24px', fontSize: '24px' }}>Sozlamalar</h2>
@@ -1107,7 +1076,7 @@ export default function App() {
               <div>
                 <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <button
-                    onClick={() => setActiveView('students')}
+                    onClick={() => setActiveView('dashboard')}
                     style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)' }}
                   >
                     <ArrowLeft size={16} /> Orqaga
