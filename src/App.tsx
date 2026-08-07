@@ -675,7 +675,7 @@ export default function App() {
                 </div>
                 <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><Globe size={28} color="#0095F6" /> Barcha Foydalanuvchilar</h2>
                 <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-                  {[...users].filter(u => u.eduId !== '1000000').map((user: any, index: number) => (
+                  {[...users].filter(u => u.eduId !== '1000000' && u.name !== 'Educal Bot').map((user: any, index: number) => (
                     <div 
                       key={user.id} 
                       onClick={() => handleProfileView(user)} 
@@ -708,7 +708,7 @@ export default function App() {
               <div>
                 <h2 style={{ marginBottom: '24px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}><Trophy size={28} color="#f59e0b" /> Top Reyting</h2>
                 <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-                  {[...users].filter(u => u.eduId !== '1000000').sort((a, b) => {
+                  {[...users].filter(u => u.eduId !== '1000000' && u.name !== 'Educal Bot').sort((a, b) => {
                     if(a.level==='Bot') return 1; if(b.level==='Bot') return -1; const levelA = a.level === 'Asoschi' ? 1000 : parseInt(a.level || '1');
                     const levelB = b.level === 'Asoschi' ? 1000 : parseInt(b.level || '1');
                     return levelB - levelA;
@@ -746,7 +746,7 @@ export default function App() {
               <div>
                 <h2 style={{ marginBottom: '24px', fontSize: '24px' }}>Barcha O'quvchilar</h2>
                 <div className="grid-layout">
-                  {users.map((user: any) => (
+                  {users.filter(u => u.eduId !== '1000000' && u.name !== 'Educal Bot').map((user: any) => (
                     <div className="card" key={user.id} onClick={() => handleProfileView(user)} style={{ cursor: 'pointer' }}>
                       <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px' }}>
                         <img loading="lazy" src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} alt="Avatar" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
