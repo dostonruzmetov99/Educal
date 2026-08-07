@@ -944,7 +944,16 @@ export default function App() {
                       <div style={{ marginBottom: '20px', padding: '12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px' }}>
                         <h4 style={{ color: '#b91c1c', marginBottom: '8px' }}>Shikoyatlar ({botMessages.length})</h4>
                         {botMessages.map((msg: any) => (
-                          <p key={msg.id} style={{ margin: 0, fontSize: '12px', color: '#7f1d1d' }}>{msg.reporter?.name} {"->"} {msg.reportedUser?.name}</p>
+                          <div key={msg.id} style={{ margin: '8px 0', fontSize: '13px', color: '#7f1d1d', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #fecaca' }}>
+                            <div style={{ display: 'flex', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                               <strong style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => { setSelectedUser(msg.reporter); setActiveView('profile'); }}>{msg.reporter?.name}</strong> 
+                               <span>ushbu shaxs ustidan shikoyat qildi:</span>
+                               <strong style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => { setSelectedUser(msg.reportedUser); setActiveView('profile'); }}>{msg.reportedUser?.name}</strong>
+                            </div>
+                            <div style={{ background: '#fef2f2', padding: '8px', borderRadius: '6px', fontStyle: 'italic', marginTop: '4px' }}>
+                              Sabab: " {msg.reason} "
+                            </div>
+                          </div>
                         ))}
                       </div>
                     )}
