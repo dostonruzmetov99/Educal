@@ -220,7 +220,7 @@ export default function App() {
       });
     } catch(e) {
       showToast("Xatolik", "error");
-    } finally { setIsSaving(false); }
+    }
   };
 
   const handleCreatePost = async () => {
@@ -268,16 +268,17 @@ export default function App() {
       .catch(err => console.error(err));
     }
 
-    fetch(API_URL + '/api/init', { method: 'POST' })
-      .then(() => fetch(API_URL + '/api/users', {headers:{'Authorization':'Bearer '+localStorage.getItem('token')}}))
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setUsers([...data, {id:999999, name:'Educal Bot', username:'@educal_bot', eduId:'1000000', level:'Bot', isVerified:true, avatar:'https://ui-avatars.com/api/?name=EB&background=4f46e5&color=fff', achievements:[]}]);
-      });
+    fetch(API_URL + '/api/init').catch(()=>{});
 
-    fetch(API_URL + '/api/posts', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } })
-      .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setPosts(data); });
+    Promise.all([
+      fetch(API_URL + '/api/users', {headers:{'Authorization':'Bearer '+localStorage.getItem('token')}}).then(res => res.json()),
+      fetch(API_URL + '/api/posts', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } }).then(res => res.json())
+    ])
+    .then(([usersData, postsData]) => {
+      if (Array.isArray(usersData)) setUsers([...usersData, {id:999999, name:'Educal Bot', username:'@educal_bot', eduId:'1000000', level:'Bot', isVerified:true, avatar:'https://ui-avatars.com/api/?name=EB&background=4f46e5&color=fff', achievements:[]}]);
+      if (Array.isArray(postsData)) setPosts(postsData);
+    })
+    .catch(() => {});
       
   }, []);
 
@@ -311,7 +312,7 @@ export default function App() {
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>Email yoki Username</label>
-            <input type="text" id="authEmail" onInput={(e) => { e.currentTarget.value = e.currentTarget.value.toLowerCase().replace(/[^a-z0-9_@.]/g, '') }} placeholder="Email yoki usernameni kiriting" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '15px' }} />
+            <input type="text" id="authEmail" placeholder="Email yoki usernameni kiriting" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '15px' }} />
           </div>
           
           <div style={{ marginBottom: '32px' }}>
@@ -871,7 +872,7 @@ export default function App() {
                   </div>
                   <div style={{marginBottom: '16px'}}>
                     <label style={{display: 'block', marginBottom: '8px', fontWeight: 600}}>Username</label>
-                    <input type="text" value={editUsername} onChange={(e) => setEditUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_@]/g, ''))} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '15px'}} />
+                    <input type="text" value={editUsername} onChange={(e) => setEditUsername(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '15px'}} />
                   </div>
                   <div style={{marginBottom: '16px'}}>
                     <label style={{display: 'block', marginBottom: '8px', fontWeight: 600}}>Bio (O'zingiz haqingizda)</label>
@@ -1423,12 +1424,12 @@ export default function App() {
           
 {followersModal && (
   <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setFollowersModal(null)}>
-    <div style={{ background: 'var(--bg-card)', width: '400px', maxHeight: '60vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+    <div style={{ background: 'var(--bg-card)', width: '350px', maxHeight: '70vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
       <div style={{ padding: '16px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h3 style={{ fontWeight: 600 }}>{followersModal.type === 'followers' ? 'Obunachilar' : 'Obunalar'}</h3>
         <button onClick={() => setFollowersModal(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
       </div>
-      <div style={{ padding: '16px', overflowY: 'auto', overscrollBehavior: 'contain', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={{ padding: '16px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {users.filter(u => followersModal.type === 'followers' ? u.followingRel?.some((f:any)=>f.followingId === followersModal.userId) : u.followedBy?.some((f:any)=>f.followerId === followersModal.userId)).map(u => (
           <div key={u.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => { handleProfileView(u); setFollowersModal(null); }}>
             <img loading="lazy" src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
@@ -1442,14 +1443,18 @@ export default function App() {
           <p style={{ color: 'var(--text-muted)', textAlign: 'center' }}>Hech kim yo'q</p>
         )}
       </div>
+    </div>
+  </div>
+)}
+
 {commentsModalPostId && (
             <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setCommentsModalPostId(null)}>
-              <div style={{ background: 'var(--bg-card)', width: '450px', maxHeight: '65vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+              <div style={{ background: 'var(--bg-card)', width: '400px', maxHeight: '80vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
                 <div style={{ padding: '16px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <h3 style={{ fontWeight: 600 }}>Fikrlar</h3>
-                  <button onClick={() => setCommentsModalPostId(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+                  <button onClick={() => setCommentsModalPostId(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>×</button>
                 </div>
-                <div style={{ padding: '16px', overflowY: 'auto', overscrollBehavior: 'contain', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>on: 'column', gap: '12px' }}>
+                <div style={{ padding: '16px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {(posts.find(p => p.id === commentsModalPostId)?.comments || []).map((c: any) => {
                     const post = posts.find(p => p.id === commentsModalPostId);
                     const isCommentOwner = c.userId === currentUser?.id;
