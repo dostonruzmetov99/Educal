@@ -311,7 +311,7 @@ export default function App() {
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>Email yoki Username</label>
-            <input type="text" id="authEmail" placeholder="Email yoki usernameni kiriting" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '15px' }} />
+            <input type="text" id="authEmail" onInput={(e) => { e.currentTarget.value = e.currentTarget.value.toLowerCase().replace(/[^a-z0-9_@.]/g, '') }} placeholder="Email yoki usernameni kiriting" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '15px' }} />
           </div>
           
           <div style={{ marginBottom: '32px' }}>
@@ -871,7 +871,7 @@ export default function App() {
                   </div>
                   <div style={{marginBottom: '16px'}}>
                     <label style={{display: 'block', marginBottom: '8px', fontWeight: 600}}>Username</label>
-                    <input type="text" value={editUsername} onChange={(e) => setEditUsername(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '15px'}} />
+                    <input type="text" value={editUsername} onChange={(e) => setEditUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_@]/g, ''))} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', fontSize: '15px'}} />
                   </div>
                   <div style={{marginBottom: '16px'}}>
                     <label style={{display: 'block', marginBottom: '8px', fontWeight: 600}}>Bio (O'zingiz haqingizda)</label>
