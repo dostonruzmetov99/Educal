@@ -103,6 +103,15 @@ export default function App() {
     if (selectedUser) localStorage.setItem('selectedUser', JSON.stringify(selectedUser));
     else localStorage.removeItem('selectedUser');
   }, [selectedUser]);
+
+  useEffect(() => {
+    if (followersModal || commentsModalPostId) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [followersModal, commentsModalPostId]);
   const [botMessages, setBotMessages] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
   const [activeChatUserId, setActiveChatUserId] = useState<number | null>(null);
