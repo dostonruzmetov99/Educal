@@ -21,5 +21,20 @@
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Global observer to disable all autocomplete in Educal
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.addedNodes.length) {
+            document.querySelectorAll('input:not([type="password"]), textarea').forEach(el => {
+              if (el.getAttribute('autocomplete') !== 'off') {
+                el.setAttribute('autocomplete', 'off');
+              }
+            });
+          }
+        });
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    </script>
   </body>
 </html>
