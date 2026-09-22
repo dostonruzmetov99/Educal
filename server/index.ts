@@ -530,7 +530,7 @@ app.post('/api/posts/:id/comments', authMiddleware, async (req: any, res: any) =
   try {
     const postId = parseInt(req.params.id);
     const userId = req.userId;
-    const { text } = req.body;
+    const { text, imageUrl } = req.body;
     const comment = await prisma.comment.create({
       data: { postId, userId, text },
       include: { user: true }
@@ -639,11 +639,12 @@ app.post('/api/messages/:userId', authMiddleware, async (req: any, res: any) => 
     const receiverId = parseInt(req.params.userId);
     const { text } = req.body;
     
-    if (!text || text.trim() === '') return res.status(400).json({ error: "Xabar bo'sh bo'lishi mumkin emas" });
+    if ((!text || text.trim() === '') && !imageUrl) return res.status(400).json({ error: "Xabar bo'sh bo'lishi mumkin emas" });
     
     const newMsg = await prisma.message.create({
       data: {
-        text,
+        text: text || "",
+        imageUrl,
         senderId,
         receiverId
       }

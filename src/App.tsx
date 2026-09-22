@@ -117,6 +117,7 @@ export default function App() {
   const [activeChatUserId, setActiveChatUserId] = useState<number | null>(null);
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [newChatMessage, setNewChatMessage] = useState("");
+  const [newChatImage, setNewChatImage] = useState("");
 
   useEffect(() => {
     if (activeView === 'messages' && isAuthenticated) {
@@ -1047,11 +1048,12 @@ export default function App() {
                                     const res = await fetch(`${API_URL}/api/messages/${activeChatUserId}`, {
                                       method: 'POST',
                                       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-                                      body: JSON.stringify({ text: newChatMessage })
+                                      body: JSON.stringify({ text: newChatMessage, imageUrl: newChatImage })
                                     });
                                     const newMsg = await res.json();
                                     setChatMessages([...chatMessages, newMsg]);
                                     setNewChatMessage("");
+                                    setNewChatImage("");
                                   } catch (e) {}
                                 }
                               }}
@@ -1063,11 +1065,12 @@ export default function App() {
                                     const res = await fetch(`${API_URL}/api/messages/${activeChatUserId}`, {
                                       method: 'POST',
                                       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-                                      body: JSON.stringify({ text: newChatMessage })
+                                      body: JSON.stringify({ text: newChatMessage, imageUrl: newChatImage })
                                     });
                                     const newMsg = await res.json();
                                     setChatMessages([...chatMessages, newMsg]);
                                     setNewChatMessage("");
+                                    setNewChatImage("");
                                   } catch (e) {}
                                 }
                             }} style={{ background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>

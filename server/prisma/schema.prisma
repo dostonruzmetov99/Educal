@@ -104,6 +104,7 @@ model Follow {
 model Message {
   id         Int      @id @default(autoincrement())
   text       String
+  imageUrl   String?
   senderId   Int
   receiverId Int
   sender     User     @relation("SentMessages", fields: [senderId], references: [id])
