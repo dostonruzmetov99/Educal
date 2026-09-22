@@ -533,7 +533,10 @@ export default function App() {
           </div>
 
           <div style={{ display: 'flex', gap: '16px' }}>
-            <div style={{ background: 'var(--bg-main)', padding: '10px', borderRadius: '50%', cursor: 'pointer' }}>
+            <div style={{ background: 'var(--bg-main)', padding: '10px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => setIsDarkMode(!isDarkMode)}>
+              {isDarkMode ? <Sun size={20} color="var(--primary-color)"/> : <Moon size={20} color="var(--text-muted)"/>}
+            </div>
+            <div style={{ background: 'var(--bg-main)', padding: '10px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               <User size={20} onClick={() => handleProfileView(currentUser)} />
             </div>
           </div>
