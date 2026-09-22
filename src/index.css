@@ -187,3 +187,27 @@ body {
     margin-bottom: 10px;
   }
 }
+
+body.dark {
+  --primary-color: #6366f1;
+  --primary-hover: #4f46e5;
+  --bg-main: #0B0F19;      /* Deep dark aesthetic */
+  --bg-card: #111827;      /* Subtle dark card */
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+  --border-light: #1f2937;
+}
+
+body.dark .nav-item {
+  color: #9ca3af;
+}
+
+body.dark .nav-item:hover, body.dark .nav-item.active {
+  background: #1f2937;
+  color: #6366f1;
+}
+
+body.dark input, body.dark textarea {
+  background: #111827;
+  color: #f9fafb;
+}

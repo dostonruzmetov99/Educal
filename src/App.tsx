@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Settings, Search, LayoutDashboard,
+  Settings, Search, LayoutDashboard, Moon, Sun,
   User, CheckCircle2, Globe, Trophy,
   LogOut, Shield, Edit3, ArrowLeft, BadgeCheck, MoreHorizontal, Eye, EyeOff, Heart, MessageCircle, Image as ImageIcon,
   AlertTriangle, TrendingUp, XCircle, Trash2, Copy
@@ -27,6 +27,13 @@ export default function App() {
     
     return `Level ${Math.min(val, 999)}`;
   };
+
+  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
+  useEffect(() => {
+    if(isDarkMode) document.body.classList.add('dark');
+    else document.body.classList.remove('dark');
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
   const [isLoginMode, setIsLoginMode] = useState(true);
