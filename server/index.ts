@@ -693,6 +693,8 @@ app.delete('/api/messages/:userId', authMiddleware, async (req: any, res: any) =
 });
 
 
+app.get('/', (req, res) => res.status(200).send('Educal Backend is awake!'));
+
 app.listen(PORT, () => {
   console.log(`Backend is running on http://localhost:${PORT}`);
 });
