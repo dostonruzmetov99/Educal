@@ -609,7 +609,7 @@ export default function App() {
                           <div style={{ position: 'relative' }}>
                             <MoreHorizontal size={20} color="var(--text-muted)" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setOpenPostMenuId(openPostMenuId === post.id ? null : post.id); }} />
                             {openPostMenuId === post.id && (
-                              <div style={{ position: 'absolute', right: 0, top: '24px', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
+                              <div style={{ position: 'absolute', right: 0, top: '24px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
                                 <div 
                                   onClick={() => { 
                                     navigator.clipboard.writeText(post.content); 
@@ -908,7 +908,7 @@ export default function App() {
                       </div>
                     </div>
                     {editAchievements.map((ach: any) => (
-                      <div key={ach.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'white', borderRadius: '6px', border: '1px solid var(--border-light)', marginBottom: '4px'}}>
+                      <div key={ach.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'var(--bg-card)', borderRadius: '6px', border: '1px solid var(--border-light)', marginBottom: '4px'}}>
                         <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
                           {ach.image && <img loading="lazy" src={ach.image} alt={ach.title} style={{width: '30px', height: '30px', objectFit: 'cover', borderRadius: '4px'}} />}
                           <span>{ach.title}</span>
@@ -934,7 +934,7 @@ export default function App() {
                       <div style={{ marginBottom: '20px', padding: '12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px' }}>
                         <h4 style={{ color: '#b91c1c', marginBottom: '8px' }}>Shikoyatlar ({botMessages.length})</h4>
                         {botMessages.map((msg: any) => (
-                          <div key={msg.id} style={{ margin: '8px 0', fontSize: '13px', color: '#7f1d1d', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #fecaca' }}>
+                          <div key={msg.id} style={{ margin: '8px 0', fontSize: '13px', color: '#7f1d1d', background: 'var(--bg-card)', padding: '12px', borderRadius: '8px', border: '1px solid #fecaca' }}>
                             <div style={{ display: 'flex', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                                <strong style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => { setSelectedUser(msg.reporter); setActiveView('profile'); }}>{msg.reporter?.name}</strong> 
                                <span>ushbu shaxs ustidan shikoyat qildi:</span>
@@ -967,7 +967,7 @@ export default function App() {
                                 <MoreHorizontal size={20} />
                               </button>
                               {openConvoMenuId === conv.user.id && (
-                                <div style={{ position: 'absolute', right: 0, top: '100%', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
+                                <div style={{ position: 'absolute', right: 0, top: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
                                   <div onClick={async (e) => {
                                     e.stopPropagation();
                                     setConfirmDialog({
@@ -1023,7 +1023,7 @@ export default function App() {
                                       <MoreHorizontal size={16} />
                                     </button>
                                     {openMsgMenuId === msg.id && (
-                                      <div style={{ position: 'absolute', [isMe ? 'right' : 'left']: '100%', top: 0, background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '130px', margin: '0 8px' }}>
+                                      <div style={{ position: 'absolute', [isMe ? 'right' : 'left']: '100%', top: 0, background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '130px', margin: '0 8px' }}>
                                         <div onClick={async () => {
                                           setConfirmDialog({
                                             msg: "Ushbu xabarni o'chirmoqchimisiz? (Ikkala tomon uchun ham o'chadi)",
@@ -1354,7 +1354,7 @@ export default function App() {
                             <div style={{ position: 'relative' }}>
                               <MoreHorizontal size={20} color="var(--text-muted)" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setOpenPostMenuId(openPostMenuId === post.id ? null : post.id); }} />
                               {openPostMenuId === post.id && (
-                                <div style={{ position: 'absolute', right: 0, top: '24px', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
+                                <div style={{ position: 'absolute', right: 0, top: '24px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '150px' }}>
                                   <div 
                                     onClick={() => { 
                                       navigator.clipboard.writeText(post.content); 
@@ -1496,7 +1496,7 @@ export default function App() {
                       <div style={{ position: 'relative' }}>
                         <MoreHorizontal size={16} color="var(--text-muted)" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setOpenCommentMenuId(openCommentMenuId === c.id ? null : c.id); }} />
                         {openCommentMenuId === c.id && (
-                          <div style={{ position: 'absolute', right: 0, top: '20px', background: 'white', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '130px' }}>
+                          <div style={{ position: 'absolute', right: 0, top: '20px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, width: '130px' }}>
                             <div 
                               onClick={() => { 
                                 navigator.clipboard.writeText(c.text); 
